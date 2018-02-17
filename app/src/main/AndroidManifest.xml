@@ -16,6 +16,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.passengerActivities.CurrentTripActivity"
+            android:parentActivityName=".activities.passengerActivities.RequestTripActivity">
+        </activity>
+        <activity
+            android:name=".activities.passengerActivities.RequestTripActivity">
+        </activity>
+        <activity
+            android:name=".activities.driverActivities.NavigationActivity"
+            android:parentActivityName=".activities.driverActivities.PassengerListActivity">
+        </activity>
+        <activity
+            android:name=".activities.driverActivities.PassengerListActivity">
+        </activity>
     </application>
 
 </manifest>

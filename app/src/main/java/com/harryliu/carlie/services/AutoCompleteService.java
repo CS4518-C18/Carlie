@@ -1,5 +1,7 @@
 package com.harryliu.carlie.services;
 
+import java.util.function.Function;
+
 /**
  * @author Yuan Wang
  *
@@ -7,7 +9,4 @@ package com.harryliu.carlie.services;
  */
 
 public class AutoCompleteService {
-
-
-
 }

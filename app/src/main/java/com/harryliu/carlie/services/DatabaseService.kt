@@ -6,7 +6,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
-
+import com.harryliu.carlie.activities.MainActivity
+import com.harryliu.carlie.activities.passengerActivities.CurrentTripActivity
 
 
 /**
@@ -29,19 +30,21 @@ class DatabaseService {
          * @param ref: Firebase database reference
          * @param callback: function which uses a string as param and returns void
          */
-        fun getUserPhone (user: FirebaseUser, ref: DatabaseReference, callback: (String?) -> Unit) {
+        fun getUserPhone (user: FirebaseUser,
+                          ref: DatabaseReference,
+                          callback: (String?) -> Unit) {
             val userRef:DatabaseReference = ref.child("users").child(user.uid)
             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val phone:String? = dataSnapshot.child("phone").getValue(String::class.java)
-                    callback(phone);
+                    callback(phone)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
                 }
             })
-            userRef.child("getPhone").setValue(true)
+            userRef.child("trigger").setValue(0)
         }
 
 
@@ -51,9 +54,24 @@ class DatabaseService {
          * @param ref: Firebase database reference
          * @param phone: user's phone number as a string
          */
-        fun addUserPhone (user: FirebaseUser, ref: DatabaseReference, phone: String) {
+        fun storeUserPhone (user: FirebaseUser, ref: DatabaseReference, phone: String) {
+            ref.child("users").child(user.uid).child("phone").setValue(phone)
+            ref.child("users").child(user.uid).child("type").setValue("student")
+        }
+
+        fun getUserType (user: FirebaseUser, ref: DatabaseReference, callback: (String?) -> Unit) {
             val userRef:DatabaseReference = ref.child("users").child(user.uid)
-            userRef.setValue(phone)
+            userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val type:String? = dataSnapshot.child("type").getValue(String::class.java)
+                    callback(type)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                }
+            })
+            userRef.child("trigger").setValue(0)
         }
     }
 }

@@ -8,8 +8,19 @@ import com.google.firebase.auth.FirebaseAuth
 import android.support.annotation.NonNull
 import android.app.Activity
 import android.content.Context
+import com.google.firebase.auth.PhoneAuthProvider
+import com.harryliu.carlie.R
+import com.harryliu.carlie.R.id.edit_phone_number
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.KFunction
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.PhoneAuthCredential
+
+
 
 
 /**
@@ -22,10 +33,10 @@ class AuthenticationService {
          * specifies the list of authentication methods
          */
         private val mAuthProviders:List<AuthUI.IdpConfig> = Arrays.asList(
-                //new AuthUI.IdpConfig.EmailBuilder().build(),
+                AuthUI.IdpConfig.EmailBuilder().build(),
                 //AuthUI.IdpConfig.PhoneBuilder().build(),
-                AuthUI.IdpConfig.GoogleBuilder().build()
-                //new AuthUI.IdpConfig.FacebookBuilder().build(),
+                AuthUI.IdpConfig.GoogleBuilder().build(),
+                AuthUI.IdpConfig.FacebookBuilder().build()
                 //new AuthUI.IdpConfig.TwitterBuilder().build()
         )
 
@@ -81,6 +92,7 @@ class AuthenticationService {
                 }
             }
         }
+
 
 
     }

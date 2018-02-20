@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.harryliu.carlie.R;
+import com.harryliu.carlie.services.AuthenticationService;
+import com.harryliu.carlie.services.DatabaseService;
 
 /**
  * @author Haofan Zhang

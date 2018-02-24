@@ -1,5 +1,7 @@
 package com.harryliu.carlie.services;
 
+import com.harryliu.carlie.Trip;
+
 /**
  * @author Harry Liu
  *
@@ -7,5 +9,5 @@ package com.harryliu.carlie.services;
  */
 
 public class TripService {
-
+    public static Trip passengerCurrentTrip;
 }

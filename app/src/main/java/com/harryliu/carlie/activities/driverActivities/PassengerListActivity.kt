@@ -24,35 +24,40 @@ class PassengerListActivity : AppCompatActivity() {
     private val mTripList = ArrayList<Trip>()
     private var mListView: ListView? = null
     private val mContext = this
+    private val mAdapter: AppAdapter = AppAdapter(mTripList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_passenger_list)
         //supportActionBar!!.hide()
 
-        DatabaseService.getTripList(::initializePassengerList)
         DatabaseService.bindTripList(::updatePassengerList)
         mListView = findViewById(R.id.passenger_list)
+        mListView!!.adapter = mAdapter
     }
 
-    private fun updatePassengerList(tripSnap: DataSnapshot?) {
+    private fun updatePassengerList(tripSnap: DataSnapshot?, mode: Int) {
+
         val trip = tripSnap!!.getValue(Trip::class.java)
         if (trip != null) {
-            System.out.println(trip.passenger.name)
+            if (mode == DatabaseService.ADD) {
+                mTripList.add(trip)
+                mAdapter.notifyDataSetChanged()
+            } else if (mode == DatabaseService.REMOVE) {
+                mTripList.forEach { t ->
+                    if (t.uid == trip.uid) {
+                        mTripList.remove(t)
+                    }
+                }
+                mAdapter.notifyDataSetChanged()
+            } else if (mode == DatabaseService.CHANGE) {
+
+            }
         }
+
     }
 
-    private fun initializePassengerList(list: Iterable<DataSnapshot>) {
-       list.forEach { tripSnap ->
-           val trip: Trip? = tripSnap.getValue(Trip::class.java)
-           if (trip != null) {
-               mTripList.add(trip)
-           }
-       }
-        mListView!!.adapter = AppAdapter(mTripList)
-    }
-
-        internal inner class AppAdapter constructor(val mAppList: List<Trip>) : BaseAdapter() {
+    internal inner class AppAdapter constructor(val mAppList: List<Trip>) : BaseAdapter() {
             override fun getCount(): Int {
                 return mAppList.size
             }
@@ -105,7 +110,7 @@ class PassengerListActivity : AppCompatActivity() {
                     view.tag = this
                 }
             }
-        }
+    }
 
 
 }

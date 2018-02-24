@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
 import com.harryliu.carlie.activities.driverActivities.PassengerListActivity
 import com.harryliu.carlie.activities.passengerActivities.RequestTripActivity
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     // authentication
     private val RC_SIGN_IN: Int = 123
+    private val RC_FINISH: Int = 124
     private val mAuthStateListener: FirebaseAuth.AuthStateListener =
             AuthenticationService.getAuthStateListener(
                     this,
@@ -37,19 +39,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    private fun onSignedInInitialize () {
-        val currentUser: FirebaseUser? = AuthenticationService.getUser()
-        // check if phone exist
-        if (currentUser != null) {
-            DatabaseService.getUserPhone(currentUser, ::checkPhoneExist)
-        }
-
-    }
-
-    private fun onSignedOutCleanup () {
-
-    }
-
     override fun onResume() {
         super.onResume()
         AuthenticationService.addAuthStateListener(mAuthStateListener)
@@ -60,31 +49,39 @@ class MainActivity : AppCompatActivity() {
         AuthenticationService.removeAuthStateListener(mAuthStateListener)
     }
 
-
-    private fun checkPhoneExist (phone:String?) {
-        // if exist
-        if (phone != null) {
-            // go to their own views
-            val currentUser:FirebaseUser? = AuthenticationService.getUser()
-            if (currentUser != null) {
-                DatabaseService.getUserType(currentUser, ::startUserActivity)
-            }
-        } else {
-            // go to add phone activity
-            val intent = Intent(this, AddPhoneActivity::class.java)
-            startActivity(intent)
+    private fun onSignedInInitialize () {
+        val currentUser: FirebaseUser? = AuthenticationService.getFirebaseUser()
+        // check if phone exist
+        if (currentUser != null) {
+            DatabaseService.getUser(currentUser.uid, ::checkPhoneExist)
         }
     }
 
-    private fun startUserActivity (type:String?) {
+    private fun onSignedOutCleanup () {
+
+    }
+
+    private fun checkPhoneExist (user:Passenger?) {
+        // if exist
+        if ((user != null) && (user.phone != null)) {
+            // go to their own views
+            AuthenticationService.setUser(user)
+            startUserActivity(user)
+        } else {
+            // go to add phone activity
+            val intent = Intent(this, AddPhoneActivity::class.java)
+            startActivityForResult(intent, RC_FINISH)
+        }
+    }
+
+    private fun startUserActivity (user:Passenger) {
+        val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)
-            startActivity(intent)
-            finish()
+            startActivityForResult(intent, RC_FINISH)
         } else if (type == "driver") {
             val intent = Intent(this, PassengerListActivity::class.java)
-            startActivity(intent)
-            finish()
+            startActivityForResult(intent, RC_FINISH)
         }
     }
 
@@ -99,6 +96,8 @@ class MainActivity : AppCompatActivity() {
                 // cancelled sign in
                 finish()
             }
+        } else if (requestCode == RC_FINISH) {
+            //finish()
         }
     }
 }

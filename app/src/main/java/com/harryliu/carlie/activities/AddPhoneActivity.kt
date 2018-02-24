@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
 import com.harryliu.carlie.activities.driverActivities.PassengerListActivity
 import com.harryliu.carlie.activities.passengerActivities.RequestTripActivity
@@ -19,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
  * @version 2/19/18
  */
 class AddPhoneActivity: AppCompatActivity()  {
+    private val RC_FINISH: Int = 124
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,23 +29,24 @@ class AddPhoneActivity: AppCompatActivity()  {
 
         // enter phone number
         button_confirm_phone.setOnClickListener { view ->
-            val currentUser = AuthenticationService.getUser()
-            if (currentUser != null) {
+            val firebaseUser: FirebaseUser? = AuthenticationService.getFirebaseUser()
+            if (firebaseUser != null) {
                 val phoneNumber = edit_phone_number.text.toString()
-
+                val userName = edit_name.text.toString()
                 if (phoneNumber.length == 10) {
                     // store user's phone
-                    DatabaseService.storeUserPhone(
-                            currentUser,
-                            phoneNumber)
-                    DatabaseService.getUserType(
-                            currentUser,
-                            ::startUserActivity)
-
+                    val currentUser = Passenger(
+                            firebaseUser.uid,
+                            phoneNumber,
+                            userName,
+                            "student")
+                    DatabaseService.storeUser(currentUser)
+                    AuthenticationService.setUser(currentUser)
+                    startUserActivity(currentUser)
                 } else {
                     Toast.makeText(this, "invalid phone number", Toast.LENGTH_SHORT).show()
                 }
-                //AuthenticationService.verifyPhone(phoneNumber, this, ::storeId)
+                //AuthenticationService.verifyPhone("1" + phoneNumber, this, ::storeId)
             }
         }
     }
@@ -51,14 +55,20 @@ class AddPhoneActivity: AppCompatActivity()  {
 
     }
 
-    private fun startUserActivity (type:String?) {
+    private fun startUserActivity (user:Passenger) {
+        val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)
-            startActivity(intent)
-            finish()
+            startActivityForResult(intent, RC_FINISH)
         } else if (type == "driver") {
             val intent = Intent(this, PassengerListActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, RC_FINISH)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_FINISH) {
             finish()
         }
     }

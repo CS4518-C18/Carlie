@@ -20,8 +20,7 @@ import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
-
-
+import com.harryliu.carlie.Passenger
 
 
 /**
@@ -31,7 +30,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 class AuthenticationService {
     companion object {
         private val mAuth: FirebaseAuth = com.google.firebase.auth.FirebaseAuth.getInstance()
-        private val mUser: FirebaseUser? = mAuth.currentUser
+        private var mUser: Passenger? = null
 
         /**
          * specifies the list of authentication methods
@@ -70,8 +69,13 @@ class AuthenticationService {
          * get the current user
          * @param firebaseAuth: Firebase authentication manager
          */
-        fun getUser(): FirebaseUser? = mUser
+        fun getFirebaseUser(): FirebaseUser? = mAuth.currentUser
 
+        fun getUser(): Passenger? = mUser
+
+        fun setUser(user: Passenger) {
+            mUser = user
+        }
 
         /**
          * get authentication state listener
@@ -86,7 +90,7 @@ class AuthenticationService {
                                  onSignedIn: () -> Unit,
                                  onSignedOut: () -> Unit): FirebaseAuth.AuthStateListener {
             return FirebaseAuth.AuthStateListener { firebaseAuth ->
-                if (mUser != null) {
+                if (mAuth.currentUser != null) {
                     // signed in
                     onSignedIn()
                 } else {
@@ -103,10 +107,6 @@ class AuthenticationService {
             }
         }
 
-        fun addAuthStateListener () {
-
-        }
-
         fun verifyPhone (phoneNumber: String,
                                  activity: Activity,
                                  callback: (String?, Boolean) -> Unit) {
@@ -120,9 +120,10 @@ class AuthenticationService {
                     // 2 - Auto-retrieval. On some devices Google Play services can automatically
                     //     detect the incoming verification SMS and perform verification without
                     //     user action.
-                    if (mUser != null) {
+                    val mFirebaseUser = mAuth.currentUser
+                    if (mFirebaseUser != null) {
                         Toast.makeText(activity, "ohhhhh", Toast.LENGTH_SHORT).show()
-                        mUser.updatePhoneNumber(credential)
+                        mFirebaseUser.updatePhoneNumber(credential)
                         callback(null, true)
                     }
                 }
@@ -159,9 +160,10 @@ class AuthenticationService {
         }
 
         fun updatePhone (verificationId: String?, code: String) {
-            if (mUser != null) {
+            val mFirebaseUser = mAuth.currentUser
+            if (mFirebaseUser != null) {
                 val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
-                mUser.updatePhoneNumber(credential)
+                mFirebaseUser.updatePhoneNumber(credential)
             }
         }
 

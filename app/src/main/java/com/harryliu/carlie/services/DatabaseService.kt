@@ -15,116 +15,83 @@ class DatabaseService {
 
     companion object {
 
-        /**
-         * retrieve a database reference
-         * @return Firebase database reference
-         */
         private val mRef: DatabaseReference = FirebaseDatabase.getInstance().reference
-
+        const val ADD: Int = 0
+        const val REMOVE: Int = 1
+        const val CHANGE: Int = 2
+        const val MOVE: Int = 3
 
         /**
-         * get the user's phone number and execute callback with phone as param
-         * @param user: FirebaseUser provided by authentication service
-         * @param ref: Firebase database reference
-         * @param callback: function which uses a string as param and returns void
+         * get the user as a passenger object
+         * @param uid: uid of passenger, same as the uid of firebase user
+         * @param callback: callback function
          */
-        fun getUserPhone (user: FirebaseUser,
-                          callback: (String?) -> Unit) {
-            val userRef:DatabaseReference = mRef.child("users").child(user.uid)
+        fun getUser (uid: String,
+                          callback: (Passenger?) -> Unit) {
+            val userRef:DatabaseReference = mRef.child("users").child(uid)
             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val phone:String? = dataSnapshot.child("phone").getValue(String::class.java)
-                    callback(phone)
+                    val user:Passenger? = dataSnapshot.getValue(Passenger::class.java)
+                    callback(user)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
                 }
             })
-            userRef.child("trigger").setValue(0)
         }
 
 
         /**
-         * store the user's phone number
-         * @param user: FirebaseUser provided by authentication service
-         * @param ref: Firebase database reference
-         * @param phone: user's phone number as a string
+         * store the user in firebase
+         * @param user: passenger object
          */
-        fun storeUserPhone (user: FirebaseUser, phone: String) {
-            mRef.child("users").child(user.uid).child("phone").setValue(phone)
-            mRef.child("users").child(user.uid).child("type").setValue("student")
+        fun storeUser (user: Passenger) {
+            mRef.child("users").child(user.uid).setValue(user)
         }
 
-        fun getUserType (user: FirebaseUser, callback: (String?) -> Unit) {
-            val userRef:DatabaseReference = mRef.child("users").child(user.uid)
-            userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val type:String? = dataSnapshot.child("type").getValue(String::class.java)
-                    callback(type)
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                }
-            })
-            userRef.child("trigger").setValue(0)
-        }
-
-        fun bindTripList (callback: (DataSnapshot?) -> Unit) {
-            val listRef:DatabaseReference = mRef.child("trips").child("list")
+        fun bindTripList (callback: (DataSnapshot?, Int) -> Unit) {
+            val listRef:DatabaseReference = mRef.child("trips")
             listRef.addChildEventListener(object : ChildEventListener {
                 override fun onCancelled(p0: DatabaseError?) {
                 }
 
                 override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
-                    callback(p0)
+                    callback(p0, ADD)
                 }
 
                 override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
-                    callback(p0)
+                    callback(p0, CHANGE)
                 }
 
                 override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-                    callback(p0)
+                    callback(p0, MOVE)
                 }
 
                 override fun onChildRemoved(p0: DataSnapshot?) {
-                    callback(p0)
+                    callback(p0, REMOVE)
                 }
             })
         }
 
-        fun getTripList (callback: (Iterable<DataSnapshot>) -> Unit) {
-            val tripsRef:DatabaseReference = mRef.child("trips")
-            tripsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    callback(dataSnapshot.child("list").children)
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                }
-            })
-            tripsRef.child("trigger").setValue(0)
-        }
-
-        fun addTripList (trip: Trip) {
-            val listRef:DatabaseReference = mRef.child("trips").child("list")
-            /*
-            val pushedPostRef = listRef.push()
-            val tripKey = pushedPostRef.key
-            */
+        fun addTripToList (trip: Trip) {
+            val listRef:DatabaseReference = mRef.child("trips")
             listRef.child(trip.uid).setValue(trip)
+        }
+
+        fun removeTripFromList (trip: Trip) {
+            val listRef:DatabaseReference = mRef.child("trips")
+            listRef.child(trip.uid).removeValue()
         }
 
         fun logTrip (trip: Trip) {
             val logRef : DatabaseReference = mRef.child("log")
+            logRef.child(trip.uid).setValue(trip)
             /*
             val pushedPostRef = logRef.push()
             val logKey = pushedPostRef.key
             */
-            logRef.child(trip.uid).setValue(trip)
         }
     }
 }

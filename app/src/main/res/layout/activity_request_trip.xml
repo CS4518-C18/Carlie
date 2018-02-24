@@ -12,4 +12,10 @@
         android:text="request trip"
         tools:layout_editor_absoluteX="151dp"
         tools:layout_editor_absoluteY="246dp" />
+
+    <Button
+        android:id="@+id/request_trip_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add trip"/>
 </android.support.constraint.ConstraintLayout>

@@ -1,13 +1,11 @@
 package com.harryliu.carlie.services
 
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
+import com.harryliu.carlie.Passenger
+import com.harryliu.carlie.Trip
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ValueEventListener
-import com.harryliu.carlie.activities.MainActivity
-import com.harryliu.carlie.activities.passengerActivities.CurrentTripActivity
+
 
 
 /**
@@ -21,7 +19,7 @@ class DatabaseService {
          * retrieve a database reference
          * @return Firebase database reference
          */
-        fun getDatabaseReference () = FirebaseDatabase.getInstance().getReference()
+        fun getDatabaseReference () = FirebaseDatabase.getInstance().reference
 
 
         /**
@@ -72,6 +70,62 @@ class DatabaseService {
                 }
             })
             userRef.child("trigger").setValue(0)
+        }
+
+        fun bindTripList (ref: DatabaseReference, callback: (DataSnapshot?) -> Unit) {
+            val listRef:DatabaseReference = ref.child("trips").child("list")
+            listRef.addChildEventListener(object : ChildEventListener {
+                override fun onCancelled(p0: DatabaseError?) {
+                }
+
+                override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
+                    callback(p0)
+                }
+
+                override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
+                    callback(p0)
+                }
+
+                override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+                    callback(p0)
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot?) {
+                    callback(p0)
+                }
+            })
+        }
+
+        fun getTripList (ref: DatabaseReference, callback: (Iterable<DataSnapshot>) -> Unit) {
+            val tripsRef:DatabaseReference = ref.child("trips")
+            tripsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    callback(dataSnapshot.child("list").children)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                }
+            })
+            tripsRef.child("trigger").setValue(0)
+        }
+
+        fun addTripList (ref: DatabaseReference, trip: Trip) {
+            val listRef:DatabaseReference = ref.child("trips").child("list")
+            /*
+            val pushedPostRef = listRef.push()
+            val tripKey = pushedPostRef.key
+            */
+            listRef.child(trip.uid).setValue(trip)
+        }
+
+        fun logTrip (ref: DatabaseReference, trip: Trip) {
+            val logRef : DatabaseReference = ref.child("log")
+            /*
+            val pushedPostRef = logRef.push()
+            val logKey = pushedPostRef.key
+            */
+            logRef.child(trip.uid).setValue(trip)
         }
     }
 }

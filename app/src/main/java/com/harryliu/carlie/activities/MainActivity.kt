@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
             } else if (resultCode == RESULT_CANCELED) {
                 // cancelled sign in
-                finish();
+                finish()
             }
         }
     }

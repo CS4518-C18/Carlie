@@ -15,7 +15,8 @@ import kotlinx.android.synthetic.main.activity_add_phone.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**
- * Created by haofanzhang on 2/19/18.
+ * @author Haofan Zhang
+ * @version 2/19/18
  */
 class AddPhoneActivity: AppCompatActivity()  {
 
@@ -28,25 +29,31 @@ class AddPhoneActivity: AppCompatActivity()  {
 
         // enter phone number
         button_confirm_phone.setOnClickListener { view ->
-            val currentUser = AuthenticationService.getUser(mFirebaseAuth);
+            val currentUser = AuthenticationService.getUser(mFirebaseAuth)
             if (currentUser != null) {
                 val phoneNumber = edit_phone_number.text.toString()
+
                 if (phoneNumber.length == 10) {
                     // store user's phone
                     DatabaseService.storeUserPhone(
                             currentUser,
                             mDatabaseReference,
                             phoneNumber)
-                    // go to each user's activity
                     DatabaseService.getUserType(
                             currentUser,
                             mDatabaseReference,
                             ::startUserActivity)
+
                 } else {
                     Toast.makeText(this, "invalid phone number", Toast.LENGTH_SHORT).show()
                 }
+                //AuthenticationService.verifyPhone(phoneNumber, this, currentUser, ::storeId)
             }
         }
+    }
+
+    private fun storeId (id: String?, passed: Boolean) {
+
     }
 
     private fun startUserActivity (type:String?) {

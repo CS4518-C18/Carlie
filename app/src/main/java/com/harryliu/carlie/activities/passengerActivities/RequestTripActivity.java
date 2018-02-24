@@ -20,7 +20,6 @@ import com.harryliu.carlie.services.DatabaseService;
  */
 
 public class RequestTripActivity extends AppCompatActivity{
-    DatabaseReference dr = DatabaseService.Companion.getDatabaseReference();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,10 +30,7 @@ public class RequestTripActivity extends AppCompatActivity{
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseService.Companion.addTripList(dr,
-                        new Trip(
-                                new Passenger(AuthenticationService.Companion.getUser(
-                                        AuthenticationService.Companion.getFirebaseAuth()).getUid(),
+                DatabaseService.Companion.addTripList(new Trip(new Passenger(AuthenticationService.Companion.getUser().getUid(),
                                         "30",
                                         "john"), "", ""));
             }

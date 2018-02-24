@@ -30,6 +30,9 @@ import com.google.firebase.auth.PhoneAuthCredential
  */
 class AuthenticationService {
     companion object {
+        private val mAuth: FirebaseAuth = com.google.firebase.auth.FirebaseAuth.getInstance()
+        private val mUser: FirebaseUser? = mAuth.currentUser
+
         /**
          * specifies the list of authentication methods
          */
@@ -41,11 +44,19 @@ class AuthenticationService {
                 //new AuthUI.IdpConfig.TwitterBuilder().build()
         )
 
+        fun addAuthStateListener(listener: FirebaseAuth.AuthStateListener) {
+            mAuth.addAuthStateListener(listener)
+        }
+
+
+        fun removeAuthStateListener(listener: FirebaseAuth.AuthStateListener) {
+            mAuth.removeAuthStateListener(listener)
+        }
         /**
          * get Firebase authentication manager
          * @return FirebaseAuth instance
          */
-        fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+        fun getFirebaseAuth(): FirebaseAuth = mAuth
 
 
         /**
@@ -59,7 +70,7 @@ class AuthenticationService {
          * get the current user
          * @param firebaseAuth: Firebase authentication manager
          */
-        fun getUser(firebaseAuth: FirebaseAuth): FirebaseUser? = firebaseAuth.currentUser
+        fun getUser(): FirebaseUser? = mUser
 
 
         /**
@@ -75,9 +86,7 @@ class AuthenticationService {
                                  onSignedIn: () -> Unit,
                                  onSignedOut: () -> Unit): FirebaseAuth.AuthStateListener {
             return FirebaseAuth.AuthStateListener { firebaseAuth ->
-
-                val user: FirebaseUser? = firebaseAuth.currentUser
-                if (user != null) {
+                if (mUser != null) {
                     // signed in
                     onSignedIn()
                 } else {
@@ -94,9 +103,12 @@ class AuthenticationService {
             }
         }
 
+        fun addAuthStateListener () {
+
+        }
+
         fun verifyPhone (phoneNumber: String,
                                  activity: Activity,
-                                 user: FirebaseUser,
                                  callback: (String?, Boolean) -> Unit) {
 
             val mCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -108,9 +120,11 @@ class AuthenticationService {
                     // 2 - Auto-retrieval. On some devices Google Play services can automatically
                     //     detect the incoming verification SMS and perform verification without
                     //     user action.
-                    Toast.makeText(activity, "ohhhhh", Toast.LENGTH_SHORT).show()
-                    user.updatePhoneNumber(credential)
-                    callback(null, true)
+                    if (mUser != null) {
+                        Toast.makeText(activity, "ohhhhh", Toast.LENGTH_SHORT).show()
+                        mUser.updatePhoneNumber(credential)
+                        callback(null, true)
+                    }
                 }
 
                 override fun onVerificationFailed(e: FirebaseException) {
@@ -144,9 +158,11 @@ class AuthenticationService {
                     mCallbacks)
         }
 
-        fun updatePhone (verificationId: String?, code: String, user: FirebaseUser) {
-            val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
-            user.updatePhoneNumber(credential)
+        fun updatePhone (verificationId: String?, code: String) {
+            if (mUser != null) {
+                val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
+                mUser.updatePhoneNumber(credential)
+            }
         }
 
 

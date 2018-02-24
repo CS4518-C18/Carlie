@@ -24,17 +24,12 @@ class MainActivity : AppCompatActivity() {
 
     // authentication
     private val RC_SIGN_IN: Int = 123
-    private val mFirebaseAuth: FirebaseAuth = AuthenticationService.getFirebaseAuth()
     private val mAuthStateListener: FirebaseAuth.AuthStateListener =
             AuthenticationService.getAuthStateListener(
                     this,
                     RC_SIGN_IN,
                     ::onSignedInInitialize,
                     ::onSignedOutCleanup)
-
-    // database
-    private val mDatabaseReference: DatabaseReference =
-            DatabaseService.getDatabaseReference()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,12 +38,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onSignedInInitialize () {
-        val currentUser: FirebaseUser? = AuthenticationService.getUser(mFirebaseAuth)
+        val currentUser: FirebaseUser? = AuthenticationService.getUser()
         // check if phone exist
         if (currentUser != null) {
-            DatabaseService.getUserPhone(currentUser,
-                    mDatabaseReference,
-                    ::checkPhoneExist)
+            DatabaseService.getUserPhone(currentUser, ::checkPhoneExist)
         }
 
     }
@@ -59,12 +52,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener)
+        AuthenticationService.addAuthStateListener(mAuthStateListener)
     }
 
     override fun onPause() {
         super.onPause()
-        mFirebaseAuth.removeAuthStateListener(mAuthStateListener)
+        AuthenticationService.removeAuthStateListener(mAuthStateListener)
     }
 
 
@@ -72,9 +65,9 @@ class MainActivity : AppCompatActivity() {
         // if exist
         if (phone != null) {
             // go to their own views
-            val currentUser:FirebaseUser? = AuthenticationService.getUser(mFirebaseAuth);
+            val currentUser:FirebaseUser? = AuthenticationService.getUser()
             if (currentUser != null) {
-                DatabaseService.getUserType(currentUser, mDatabaseReference, ::startUserActivity)
+                DatabaseService.getUserType(currentUser, ::startUserActivity)
             }
         } else {
             // go to add phone activity

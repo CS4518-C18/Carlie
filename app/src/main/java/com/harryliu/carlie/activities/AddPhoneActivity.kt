@@ -20,16 +20,13 @@ import kotlinx.android.synthetic.main.activity_main.*
  */
 class AddPhoneActivity: AppCompatActivity()  {
 
-    private val mFirebaseAuth: FirebaseAuth = AuthenticationService.getFirebaseAuth()
-    private val mDatabaseReference: DatabaseReference = DatabaseService.getDatabaseReference()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_phone)
 
         // enter phone number
         button_confirm_phone.setOnClickListener { view ->
-            val currentUser = AuthenticationService.getUser(mFirebaseAuth)
+            val currentUser = AuthenticationService.getUser()
             if (currentUser != null) {
                 val phoneNumber = edit_phone_number.text.toString()
 
@@ -37,17 +34,15 @@ class AddPhoneActivity: AppCompatActivity()  {
                     // store user's phone
                     DatabaseService.storeUserPhone(
                             currentUser,
-                            mDatabaseReference,
                             phoneNumber)
                     DatabaseService.getUserType(
                             currentUser,
-                            mDatabaseReference,
                             ::startUserActivity)
 
                 } else {
                     Toast.makeText(this, "invalid phone number", Toast.LENGTH_SHORT).show()
                 }
-                //AuthenticationService.verifyPhone(phoneNumber, this, currentUser, ::storeId)
+                //AuthenticationService.verifyPhone(phoneNumber, this, ::storeId)
             }
         }
     }

@@ -24,15 +24,14 @@ class PassengerListActivity : AppCompatActivity() {
     private val mTripList = ArrayList<Trip>()
     private var mListView: ListView? = null
     private val mContext = this
-    private val mDatabaseReference = DatabaseService.getDatabaseReference()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_passenger_list)
         //supportActionBar!!.hide()
 
-        DatabaseService.getTripList(mDatabaseReference, ::initializePassengerList)
-        DatabaseService.bindTripList(mDatabaseReference, ::updatePassengerList)
+        DatabaseService.getTripList(::initializePassengerList)
+        DatabaseService.bindTripList(::updatePassengerList)
         mListView = findViewById(R.id.passenger_list)
     }
 

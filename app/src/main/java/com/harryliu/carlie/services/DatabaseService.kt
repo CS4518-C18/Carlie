@@ -19,7 +19,7 @@ class DatabaseService {
          * retrieve a database reference
          * @return Firebase database reference
          */
-        fun getDatabaseReference () = FirebaseDatabase.getInstance().reference
+        private val mRef: DatabaseReference = FirebaseDatabase.getInstance().reference
 
 
         /**
@@ -29,9 +29,8 @@ class DatabaseService {
          * @param callback: function which uses a string as param and returns void
          */
         fun getUserPhone (user: FirebaseUser,
-                          ref: DatabaseReference,
                           callback: (String?) -> Unit) {
-            val userRef:DatabaseReference = ref.child("users").child(user.uid)
+            val userRef:DatabaseReference = mRef.child("users").child(user.uid)
             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -52,13 +51,13 @@ class DatabaseService {
          * @param ref: Firebase database reference
          * @param phone: user's phone number as a string
          */
-        fun storeUserPhone (user: FirebaseUser, ref: DatabaseReference, phone: String) {
-            ref.child("users").child(user.uid).child("phone").setValue(phone)
-            ref.child("users").child(user.uid).child("type").setValue("student")
+        fun storeUserPhone (user: FirebaseUser, phone: String) {
+            mRef.child("users").child(user.uid).child("phone").setValue(phone)
+            mRef.child("users").child(user.uid).child("type").setValue("student")
         }
 
-        fun getUserType (user: FirebaseUser, ref: DatabaseReference, callback: (String?) -> Unit) {
-            val userRef:DatabaseReference = ref.child("users").child(user.uid)
+        fun getUserType (user: FirebaseUser, callback: (String?) -> Unit) {
+            val userRef:DatabaseReference = mRef.child("users").child(user.uid)
             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -72,8 +71,8 @@ class DatabaseService {
             userRef.child("trigger").setValue(0)
         }
 
-        fun bindTripList (ref: DatabaseReference, callback: (DataSnapshot?) -> Unit) {
-            val listRef:DatabaseReference = ref.child("trips").child("list")
+        fun bindTripList (callback: (DataSnapshot?) -> Unit) {
+            val listRef:DatabaseReference = mRef.child("trips").child("list")
             listRef.addChildEventListener(object : ChildEventListener {
                 override fun onCancelled(p0: DatabaseError?) {
                 }
@@ -96,8 +95,8 @@ class DatabaseService {
             })
         }
 
-        fun getTripList (ref: DatabaseReference, callback: (Iterable<DataSnapshot>) -> Unit) {
-            val tripsRef:DatabaseReference = ref.child("trips")
+        fun getTripList (callback: (Iterable<DataSnapshot>) -> Unit) {
+            val tripsRef:DatabaseReference = mRef.child("trips")
             tripsRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -110,8 +109,8 @@ class DatabaseService {
             tripsRef.child("trigger").setValue(0)
         }
 
-        fun addTripList (ref: DatabaseReference, trip: Trip) {
-            val listRef:DatabaseReference = ref.child("trips").child("list")
+        fun addTripList (trip: Trip) {
+            val listRef:DatabaseReference = mRef.child("trips").child("list")
             /*
             val pushedPostRef = listRef.push()
             val tripKey = pushedPostRef.key
@@ -119,8 +118,8 @@ class DatabaseService {
             listRef.child(trip.uid).setValue(trip)
         }
 
-        fun logTrip (ref: DatabaseReference, trip: Trip) {
-            val logRef : DatabaseReference = ref.child("log")
+        fun logTrip (trip: Trip) {
+            val logRef : DatabaseReference = mRef.child("log")
             /*
             val pushedPostRef = logRef.push()
             val logKey = pushedPostRef.key

@@ -3,6 +3,7 @@ package com.harryliu.carlie.activities
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
 import com.mapbox.mapboxsdk.Mapbox
@@ -67,9 +68,11 @@ class MainActivity : AppCompatActivity(), PermissionsListener, LocationEngineLis
     private fun initializeLocationEngine() {
         mLocationEngine = LostLocationEngine(this)
         mLocationEngine!!.priority = LocationEnginePriority.HIGH_ACCURACY
-        mLocationEngine!!.activate()
+        mLocationEngine!!.interval = 200
 
         mLocationEngine!!.addLocationEngineListener(this)
+        mLocationEngine!!.activate()
+
     }
 
     private fun setCameraPosition(location: Location) {
@@ -92,13 +95,12 @@ class MainActivity : AppCompatActivity(), PermissionsListener, LocationEngineLis
 
     @SuppressWarnings("MissingPermission")
     override fun onConnected() {
+        Log.d("onConnected", "Connected")
         mLocationEngine!!.requestLocationUpdates()
     }
 
-    override fun onLocationChanged(location: Location?) {
-        if (location != null) {
-            setCameraPosition(location)
-        }
+    override fun onLocationChanged(location: Location) {
+        setCameraPosition(location)
     }
 
     @SuppressWarnings("MissingPermission")

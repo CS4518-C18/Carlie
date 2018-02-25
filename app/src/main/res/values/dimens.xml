@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="start_navigation_button_width">40dp</dimen>
+    <dimen name="place_info_padding">20dp</dimen>
+    <dimen name="place_name">20sp</dimen>
+    <dimen name="place_address_name">14sp</dimen>
+</resources>

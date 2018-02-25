@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.harryliu.carlie">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,9 +18,9 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_geo_api_key"/>
+            android:value="@string/google_geo_api_key" />
 
-        <activity android:name=".activities.passengerActivities.PlaceAutoCompleteActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,19 +28,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.passengerActivities.CurrentTripActivity"
-            android:parentActivityName=".activities.passengerActivities.RequestTripActivity">
-        </activity>
+            android:name=".activities.passengerActivities.PlaceAutoCompleteActivity"
+            android:parentActivityName=".activities.MainActivity"/>
         <activity
-            android:name=".activities.passengerActivities.RequestTripActivity">
-        </activity>
+            android:name=".activities.passengerActivities.CurrentTripActivity"
+            android:parentActivityName=".activities.passengerActivities.RequestTripActivity"/>
+        <activity android:name=".activities.passengerActivities.RequestTripActivity"/>
         <activity
             android:name=".activities.driverActivities.NavigationActivity"
-            android:parentActivityName=".activities.driverActivities.PassengerListActivity">
-        </activity>
-        <activity
-            android:name=".activities.driverActivities.PassengerListActivity">
-        </activity>
+            android:parentActivityName=".activities.driverActivities.PassengerListActivity"/>
+        <activity android:name=".activities.driverActivities.PassengerListActivity"/>
     </application>
 
 </manifest>

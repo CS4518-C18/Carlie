@@ -4,4 +4,10 @@
     <dimen name="place_info_padding">20dp</dimen>
     <dimen name="place_name">20sp</dimen>
     <dimen name="place_address_name">14sp</dimen>
+    <dimen name="drop_off_button_margin_top">60dp</dimen>
+    <dimen name="drop_off_button_margin_side">20dp</dimen>
+    <dimen name="drop_off_button_padding_vertical">20dp</dimen>
+    <dimen name="drop_off_button_padding_horizontal">40dp</dimen>
+    <dimen name="drop_off_button_text_size">30sp</dimen>
+    <dimen name="main_map_camera_zoom">12</dimen>
 </resources>

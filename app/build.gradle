@@ -4,18 +4,24 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+repositories {
+    mavenCentral()
+}
+
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "com.harryliu.carlie"
         minSdkVersion 23
-        targetSdkVersion 26
+        targetSdkVersion 27
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes.each {
         it.resValue "string", "google_geo_api_key", (project.findProperty('GoogleGeoAPIKey') ?: '')
+        it.buildConfigField "String", "MAPBOX_ACCESS_TOKEN", (project.findProperty('MapboxAccessToken') ?: '')
         it.buildConfigField "Double", "BOUND_RADIUS_IN_MILES", (project.findProperty('BoundRadiusInMiles') ?: 1.0)
         it.buildConfigField "Double", "CAMPUS_CENTER_LAT", (project.findProperty('CampusCenterLat') ?: 0)
         it.buildConfigField "Double", "CAMPUS_CENTER_LNG", (project.findProperty('CampusCenterLng') ?: 0)
@@ -31,12 +37,19 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:27.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.android.gms:play-services-places:11.8.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
+    implementation ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.4.1@aar') {
+        transitive=true
+    }
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.9.0'
+    implementation ('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.9.0') {
+        transitive = true
+    }
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

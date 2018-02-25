@@ -87,7 +87,7 @@ public class DragDelItem extends LinearLayout {
     public void smoothCloseMenu() {
         state = STATE_CLOSE;
         mBaseX = -mContentView.getLeft();
-        scroll.startScroll(0, 0, (int)mBaseX, 0, 350);
+        scroll.startScroll(0, 0, mBaseX, 0, 500);
         postInvalidate();
     }
 
@@ -95,7 +95,7 @@ public class DragDelItem extends LinearLayout {
 
         state = STATE_OPEN;
         scroll.startScroll(-mContentView.getLeft(), 0,
-                mMenuView.getWidth()/2, 0, 350);
+                mMenuView.getWidth(), 0, 500);
         postInvalidate();
     }
 

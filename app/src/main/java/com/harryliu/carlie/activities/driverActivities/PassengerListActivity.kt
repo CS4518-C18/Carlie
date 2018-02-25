@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import com.google.firebase.database.DataSnapshot
@@ -12,7 +13,9 @@ import com.harryliu.carlie.DragDelItem
 import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
 import com.harryliu.carlie.Trip
+import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.DatabaseService
+import kotlinx.android.synthetic.main.activity_passenger_list.*
 import java.util.ArrayList
 
 /**
@@ -23,38 +26,51 @@ class PassengerListActivity : AppCompatActivity() {
 
     private val mTripList = ArrayList<Trip>()
     private var mListView: ListView? = null
-    private val mContext = this
+    private val mActivity = this
     private val mAdapter: AppAdapter = AppAdapter(mTripList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_passenger_list)
-        //supportActionBar!!.hide()
+
+        val mButtonLogout:Button = passenger_list_logout
+
+        mButtonLogout.setOnClickListener { _ ->
+            AuthenticationService.logOut(mActivity)
+            mActivity.finish()
+        }
+
+        mListView = passenger_list_view
+        mListView!!.adapter = mAdapter
 
         DatabaseService.bindTripList(::updatePassengerList)
-        mListView = findViewById(R.id.passenger_list)
-        mListView!!.adapter = mAdapter
     }
 
     private fun updatePassengerList(tripSnap: DataSnapshot?, mode: Int) {
+        if (tripSnap != null) {
+            val trip = tripSnap.getValue(Trip::class.java)
+            if (trip != null) {
+                when (mode) {
+                    DatabaseService.ADD -> {
+                        mTripList.add(trip)
+                        mAdapter.notifyDataSetChanged()
+                    }
 
-        val trip = tripSnap!!.getValue(Trip::class.java)
-        if (trip != null) {
-            if (mode == DatabaseService.ADD) {
-                mTripList.add(trip)
-                mAdapter.notifyDataSetChanged()
-            } else if (mode == DatabaseService.REMOVE) {
-                mTripList.forEach { t ->
-                    if (t.uid == trip.uid) {
-                        mTripList.remove(t)
+                    DatabaseService.REMOVE -> {
+                        for (t in mTripList) {
+                            if (t.uid == trip.uid) {
+                                mTripList.remove(t)
+                                break
+                            }
+                        }
+                        mAdapter.notifyDataSetChanged()
+                    }
+                    DatabaseService.CHANGE -> {
+
                     }
                 }
-                mAdapter.notifyDataSetChanged()
-            } else if (mode == DatabaseService.CHANGE) {
-
             }
         }
-
     }
 
     internal inner class AppAdapter constructor(val mAppList: List<Trip>) : BaseAdapter() {
@@ -71,18 +87,18 @@ class PassengerListActivity : AppCompatActivity() {
             }
 
             override fun getView(position: Int, cv: View?, parent: ViewGroup): View {
-                var convertView = cv
 
                 val holder: ViewHolder
                 val menuView: View
-                if (convertView == null) {
-                    convertView = View.inflate(mContext,
-                            R.layout.swipe_content, null)
-                    menuView = View.inflate(mContext,
-                            R.layout.swipe_menu, null)
-                    convertView = DragDelItem(convertView, menuView);
+                val contentView: View
+                val convertView: View
+                if (cv == null) {
+                    contentView = View.inflate(mActivity, R.layout.swipe_content, null)
+                    menuView = View.inflate(mActivity, R.layout.swipe_menu, null)
+                    convertView = DragDelItem(contentView, menuView)
                     holder = ViewHolder(convertView)
                 } else {
+                    convertView = cv
                     holder = convertView.tag as ViewHolder
                 }
                 val item = getItem(position)
@@ -99,14 +115,9 @@ class PassengerListActivity : AppCompatActivity() {
 
                 init {
                     // set up reference
-                    name = view.findViewById(R.id.passenger_name)
+                    name = view.findViewById(R.id.passenger_list_name)
                     tv_open = view.findViewById(R.id.tv_open)
                     tv_del = view.findViewById(R.id.tv_del)
-
-                    //DisplayMetrics displayMetrics = new DisplayMetrics();
-                    //getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                    //int width = displayMetrics.widthPixels;
-                    //cLayout.setMinimumWidth(width-60);
                     view.tag = this
                 }
             }

@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.ListView
 import com.harryliu.carlie.R
-import com.harryliu.carlie.adapters.PlaceAdaper
+import com.harryliu.carlie.adapters.PlaceAdapter
 import com.harryliu.carlie.services.PlaceAutoCompleteService
 import com.jakewharton.rxbinding2.widget.RxTextView
 import java.util.concurrent.TimeUnit
@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit
 
 class PlaceAutoCompleteActivity: AppCompatActivity() {
 
-    var mDropOffLocationEditText: EditText? = null
-    var mPlaceAutoCompleteService: PlaceAutoCompleteService? = null
-    var mPlaceAutoCompleteListView: ListView? = null
+    private var mDropOffLocationEditText: EditText? = null
+    private var mPlaceAutoCompleteService: PlaceAutoCompleteService? = null
+    private var mPlaceAutoCompleteListView: ListView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,7 @@ class PlaceAutoCompleteActivity: AppCompatActivity() {
 
         mPlaceAutoCompleteService = PlaceAutoCompleteService(this)
 
-        val placeAdapter = PlaceAdaper(this)
+        val placeAdapter = PlaceAdapter(this)
 
         mPlaceAutoCompleteListView!!.adapter = placeAdapter
 

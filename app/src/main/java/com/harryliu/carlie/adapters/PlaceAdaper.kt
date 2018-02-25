@@ -16,7 +16,7 @@ import com.harryliu.carlie.R
  * @version Feb 25, 2018
  */
 
-class PlaceAdaper(context: Context): ArrayAdapter<AutocompletePrediction>( context, R.layout.list_item_place) {
+class PlaceAdapter(context: Context): ArrayAdapter<AutocompletePrediction>( context, R.layout.list_item_place) {
     private class ViewHolder {
         var placeNameTextView: TextView? = null
         var placeAddressTextView: TextView? = null

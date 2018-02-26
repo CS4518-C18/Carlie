@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.BaseAdapter
 import android.widget.TextView
 import com.google.android.gms.location.places.AutocompletePrediction
 import com.harryliu.carlie.R
@@ -16,7 +15,7 @@ import com.harryliu.carlie.R
  * @version Feb 25, 2018
  */
 
-class PlaceAdapter(context: Context): ArrayAdapter<AutocompletePrediction>( context, R.layout.list_item_place) {
+class PlaceAdapter(context: Context) : ArrayAdapter<AutocompletePrediction>(context, R.layout.list_item_place) {
     private class ViewHolder {
         var placeNameTextView: TextView? = null
         var placeAddressTextView: TextView? = null
@@ -27,7 +26,7 @@ class PlaceAdapter(context: Context): ArrayAdapter<AutocompletePrediction>( cont
         val newConvertView: View
         val viewHolder: ViewHolder
 
-        if(convertView == null) {
+        if (convertView == null) {
             val inflater = LayoutInflater.from(context)
             newConvertView = inflater.inflate(R.layout.list_item_place, parent, false)
             viewHolder = ViewHolder()

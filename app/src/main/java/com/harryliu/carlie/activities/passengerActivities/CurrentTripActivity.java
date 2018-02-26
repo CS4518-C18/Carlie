@@ -8,11 +8,10 @@ import com.harryliu.carlie.R;
 
 /**
  * @author Haofan Zhang
- *
  * @version Feb 16, 2018
  */
 
-public class CurrentTripActivity extends AppCompatActivity{
+public class CurrentTripActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

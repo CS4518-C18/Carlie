@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
  * @version Feb 24, 2018
  */
 
-class PlaceAutoCompleteActivity: AppCompatActivity() {
+class PlaceAutoCompleteActivity : AppCompatActivity() {
 
     private var mDropOffLocationEditText: EditText? = null
     private var mPlaceAutoCompleteService: PlaceAutoCompleteService? = null
@@ -44,7 +44,7 @@ class PlaceAutoCompleteActivity: AppCompatActivity() {
                     val query = mDropOffLocationEditText!!.text.toString()
 
                     Log.d("Query", query)
-                     mPlaceAutoCompleteService!!.predictPlaces(query)
+                    mPlaceAutoCompleteService!!.predictPlaces(query)
                 }
                 .subscribe { predictions ->
                     placeAdapter.clear()

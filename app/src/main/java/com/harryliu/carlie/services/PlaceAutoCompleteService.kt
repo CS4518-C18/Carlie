@@ -1,7 +1,6 @@
 package com.harryliu.carlie.services
 
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.location.places.AutocompleteFilter
 import com.google.android.gms.location.places.AutocompletePrediction
 import com.google.android.gms.location.places.Places
@@ -26,7 +25,7 @@ class PlaceAutoCompleteService(context: Context) {
                     .build()
             getLatLngBounds()
             mGeoDataClient.getAutocompletePredictions(query, getLatLngBounds(), filter)
-                    .addOnFailureListener{exception ->
+                    .addOnFailureListener { exception ->
                         exception.printStackTrace()
                     }
                     .addOnSuccessListener { response ->

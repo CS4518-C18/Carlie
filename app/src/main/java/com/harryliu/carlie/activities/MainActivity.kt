@@ -1,11 +1,15 @@
 package com.harryliu.carlie.activities
 
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.widget.Button
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
+import com.harryliu.carlie.activities.passengerActivities.PlaceAutoCompleteActivity
+import com.harryliu.carlie.services.LocationService
+import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -14,9 +18,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.telemetry.location.LocationEngine
-import com.mapbox.services.android.telemetry.location.LocationEngineListener
-import com.mapbox.services.android.telemetry.location.LocationEnginePriority
-import com.mapbox.services.android.telemetry.location.LostLocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 
@@ -26,7 +27,7 @@ import com.mapbox.services.android.telemetry.permissions.PermissionsManager
  *
  * @version Feb 16, 2018
  */
-class MainActivity : AppCompatActivity(), PermissionsListener, LocationEngineListener {
+class MainActivity : AppCompatActivity(), PermissionsListener {
 
     private var mMapView: MapView? = null
 
@@ -38,6 +39,15 @@ class MainActivity : AppCompatActivity(), PermissionsListener, LocationEngineLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val requestRideButton = findViewById<Button>(R.id.request_ride_button)
+
+        val intent = Intent(this, PlaceAutoCompleteActivity::class.java)
+
+        RxView.clicks(requestRideButton)
+                .subscribe {
+                    startActivity(intent)
+                }
 
         Mapbox.getInstance(this, BuildConfig.MAPBOX_ACCESS_TOKEN)
         mMapView = findViewById(R.id.main_map_view)
@@ -66,12 +76,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, LocationEngineLis
 
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
-        mLocationEngine = LostLocationEngine(this)
-        mLocationEngine!!.priority = LocationEnginePriority.HIGH_ACCURACY
-        mLocationEngine!!.interval = 200
-
-        mLocationEngine!!.addLocationEngineListener(this)
-        mLocationEngine!!.activate()
+        mLocationEngine = LocationService.requestLocationUpdates(this, this::setCameraPosition)
 
     }
 
@@ -91,16 +96,6 @@ class MainActivity : AppCompatActivity(), PermissionsListener, LocationEngineLis
         } else {
             finish()
         }
-    }
-
-    @SuppressWarnings("MissingPermission")
-    override fun onConnected() {
-        Log.d("onConnected", "Connected")
-        mLocationEngine!!.requestLocationUpdates()
-    }
-
-    override fun onLocationChanged(location: Location) {
-        setCameraPosition(location)
     }
 
     @SuppressWarnings("MissingPermission")

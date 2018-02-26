@@ -57,7 +57,6 @@ class AuthenticationService {
          */
         fun getFirebaseAuth(): FirebaseAuth = mAuth
 
-
         /**
          * log out from current context
          * @param mContext: current context/activity

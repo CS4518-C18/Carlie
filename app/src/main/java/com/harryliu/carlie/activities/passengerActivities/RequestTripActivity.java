@@ -32,6 +32,7 @@ public class RequestTripActivity extends AppCompatActivity{
     private EditText mEditStart;
     private EditText mEditDestination;
     private Activity mActivity = this;
+    private Trip passengerCurrentTrip;
     private FirebaseUser mUser = AuthenticationService.Companion.getFirebaseUser();
 
 
@@ -49,12 +50,12 @@ public class RequestTripActivity extends AppCompatActivity{
         mButtonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TripService.passengerCurrentTrip == null) {
+                if (passengerCurrentTrip == null) {
                     Trip newTrip = new Trip(
                             AuthenticationService.Companion.getUser(),
                             mEditStart.getText().toString(),
                             mEditDestination.getText().toString());
-                    TripService.passengerCurrentTrip = newTrip;
+                    passengerCurrentTrip = newTrip;
                     DatabaseService.Companion.addTripToList(newTrip);
                 }
             }
@@ -63,10 +64,10 @@ public class RequestTripActivity extends AppCompatActivity{
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Trip currentTrip = TripService.passengerCurrentTrip;
+                Trip currentTrip = passengerCurrentTrip;
                 if (currentTrip != null) {
                     DatabaseService.Companion.removeTripFromList(currentTrip);
-                    TripService.passengerCurrentTrip = null;
+                    passengerCurrentTrip = null;
                 }
             }
         });

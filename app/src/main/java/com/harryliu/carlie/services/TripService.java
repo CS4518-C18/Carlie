@@ -9,5 +9,5 @@ import com.harryliu.carlie.Trip;
  */
 
 public class TripService {
-    public static Trip passengerCurrentTrip;
+    //public static Trip passengerCurrentTrip;
 }

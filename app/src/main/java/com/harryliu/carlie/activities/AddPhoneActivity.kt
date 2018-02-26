@@ -1,5 +1,6 @@
 package com.harryliu.carlie.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -56,17 +57,16 @@ class AddPhoneActivity : AppCompatActivity() {
         val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)
-            startActivityForResult(intent, RC_FINISH)
+            startActivity(intent)
         } else if (type == "driver") {
             val intent = Intent(this, PassengerListActivity::class.java)
-            startActivityForResult(intent, RC_FINISH)
+            startActivity(intent)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_FINISH) {
-            finish()
-        }
+
+    override fun onBackPressed() {
+        AuthenticationService.logOut(this)
+        finish()
     }
 }

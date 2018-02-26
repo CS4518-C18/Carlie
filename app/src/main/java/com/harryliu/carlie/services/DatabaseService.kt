@@ -73,13 +73,28 @@ class DatabaseService {
         }
 
         fun addTripToList(trip: Trip) {
-            val listRef: DatabaseReference = mRef.child("trips")
-            listRef.child(trip.uid).setValue(trip)
+            val listRef: DatabaseReference = mRef.child("trips").child(trip.passenger.uid)
+            listRef.setValue(trip)
         }
 
-        fun removeTripFromList(trip: Trip) {
-            val listRef: DatabaseReference = mRef.child("trips")
-            listRef.child(trip.uid).removeValue()
+        fun removeTripFromList(passengerId: String) {
+            val listRef: DatabaseReference = mRef.child("trips").child(passengerId)
+            listRef.removeValue()
+        }
+
+        fun getTripFromList (passengerId: String, callback: (Trip?) -> Unit) {
+            val listRef: DatabaseReference = mRef.child("trips").child(passengerId)
+            listRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError?) {
+                }
+                override fun onDataChange(p0: DataSnapshot?) {
+                    if (p0 != null) {
+                        callback(p0.getValue(Trip::class.java))
+                    } else {
+                        callback(null)
+                    }
+                }
+            })
         }
 
         fun logTrip(trip: Trip) {

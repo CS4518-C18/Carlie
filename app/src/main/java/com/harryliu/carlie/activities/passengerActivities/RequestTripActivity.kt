@@ -23,68 +23,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
-
-/**
- * @author Harry Liu
- * @version Feb 16, 2018
- */
-//public class RequestTripActivity extends AppCompatActivity {
-//    private Button mButtonSend;
-//    private Button mButtonCancel;
-//    private Button mButtonLogout;
-//    private EditText mEditStart;
-//    private EditText mEditDestination;
-//    private Activity mActivity = this;
-//    private Trip passengerCurrentTrip;
-//    private FirebaseUser mUser = AuthenticationService.Companion.getFirebaseUser();
-//
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_request_trip);
-//
-//        mButtonSend = findViewById(R.id.request_trip_send);
-//        mButtonCancel = findViewById(R.id.request_trip_cancel);
-//        mButtonLogout = findViewById(R.id.request_trip_logout);
-//        mEditStart = findViewById(R.id.request_trip_start);
-//        mEditDestination = findViewById(R.id.request_trip_destination);
-//
-//        mButtonSend.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (passengerCurrentTrip == null) {
-//                    Trip newTrip = new Trip(
-//                            AuthenticationService.Companion.getUser(),
-//                            mEditStart.getText().toString(),
-//                            mEditDestination.getText().toString());
-//                    passengerCurrentTrip = newTrip;
-//                    DatabaseService.Companion.addTripToList(newTrip);
-//                }
-//            }
-//        });
-//
-//        mButtonCancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Trip currentTrip = passengerCurrentTrip;
-//                if (currentTrip != null) {
-//                    DatabaseService.Companion.removeTripFromList(currentTrip);
-//                    passengerCurrentTrip = null;
-//                }
-//            }
-//        });
-//
-//        mButtonLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                AuthenticationService.Companion.logOut(mActivity);
-//                mActivity.finish();
-//            }
-//        });
-//
-//    }
-//
-//}
+import android.app.Activity
 
 
 /**
@@ -99,7 +38,6 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     private var mPermissionsManager: PermissionsManager? = null
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
-    private val mCurrentUser = AuthenticationService.Companion.getUser()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -233,5 +171,9 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     }
 
     override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
+    }
+
+    override fun onBackPressed() {
+        //do nothing
     }
 }

@@ -1,5 +1,6 @@
 package com.harryliu.carlie.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     // authentication
     private val RC_SIGN_IN: Int = 123
     private val RC_FINISH: Int = 124
+
     private val mAuthStateListener: FirebaseAuth.AuthStateListener =
             AuthenticationService.getAuthStateListener(
                     this,
@@ -67,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             // go to add phone activity
             val intent = Intent(this, AddPhoneActivity::class.java)
-            startActivityForResult(intent, RC_FINISH)
+            startActivity(intent)
         }
     }
 
@@ -75,10 +77,10 @@ class MainActivity : AppCompatActivity() {
         val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)
-            startActivityForResult(intent, RC_FINISH)
+            startActivity(intent)
         } else if (type == "driver") {
             val intent = Intent(this, PassengerListActivity::class.java)
-            startActivityForResult(intent, RC_FINISH)
+            startActivity(intent)
         }
     }
 
@@ -93,8 +95,6 @@ class MainActivity : AppCompatActivity() {
                 // cancelled sign in
                 finish()
             }
-        } else if (requestCode == RC_FINISH) {
-            //finish()
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.harryliu.carlie.activities.driverActivities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -37,7 +39,7 @@ class PassengerListActivity : AppCompatActivity() {
 
         mButtonLogout.setOnClickListener { _ ->
             AuthenticationService.logOut(mActivity)
-            mActivity.finish()
+            finish()
         }
 
         mListView = passenger_list_view
@@ -66,7 +68,14 @@ class PassengerListActivity : AppCompatActivity() {
                         mAdapter.notifyDataSetChanged()
                     }
                     DatabaseService.CHANGE -> {
-
+                        var i = 0
+                        while (i < mTripList.size) {
+                            if (mTripList[i].uid == trip.uid) {
+                                mTripList[i] = trip
+                                break
+                            }
+                            i++
+                        }
                     }
                 }
             }
@@ -123,5 +132,8 @@ class PassengerListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        //do nothing
+    }
 
 }

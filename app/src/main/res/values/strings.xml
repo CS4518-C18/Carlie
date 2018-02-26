@@ -3,4 +3,5 @@
     <string name="pickup_location">Pickup location</string>
     <string name="drop_off_location">Where to?</string>
     <string name="request_ride">Request Ride</string>
+    <string name="destination_too_far">You destination is too far away from campus.</string>
 </resources>

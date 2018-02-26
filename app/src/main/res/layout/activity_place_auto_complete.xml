@@ -7,7 +7,7 @@
 
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/pickup_location_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="45dp"
@@ -28,7 +28,7 @@
         android:paddingStart="@dimen/place_info_padding"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/pickup_location_edit_text" />
 
 
     <ListView
@@ -37,7 +37,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/drop_off_location_edit_text"
-        app:layout_constraintTop_toBottomOf="@+id/editText">
+        app:layout_constraintTop_toBottomOf="@+id/pickup_location_edit_text">
 
     </ListView>
 </android.support.constraint.ConstraintLayout>

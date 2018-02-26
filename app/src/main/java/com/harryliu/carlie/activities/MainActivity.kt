@@ -76,7 +76,9 @@ class MainActivity : AppCompatActivity(), PermissionsListener {
 
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
-        mLocationEngine = LocationService.requestLocationUpdates(this, this::setCameraPosition)
+        mLocationEngine = LocationService.requestLocationUpdates(this, { location, _, _ ->
+            setCameraPosition(location)
+        })
 
     }
 

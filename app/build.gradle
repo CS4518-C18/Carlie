@@ -22,9 +22,6 @@ android {
     buildTypes.each {
         it.resValue "string", "google_geo_api_key", (project.findProperty('GoogleGeoAPIKey') ?: '')
         it.buildConfigField "String", "MAPBOX_ACCESS_TOKEN", (project.findProperty('MapboxAccessToken') ?: '')
-        it.buildConfigField "Double", "BOUND_RADIUS_IN_MILES", (project.findProperty('BoundRadiusInMiles') ?: 1.0)
-        it.buildConfigField "Double", "CAMPUS_CENTER_LAT", (project.findProperty('CampusCenterLat') ?: 0)
-        it.buildConfigField "Double", "CAMPUS_CENTER_LNG", (project.findProperty('CampusCenterLng') ?: 0)
     }
     buildTypes {
         release {

@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import com.google.android.gms.location.places.AutocompletePrediction
 import com.harryliu.carlie.R
+import com.harryliu.carlie.viewModels.PlaceViewModel
 
 /**
  * @author Harry Liu
@@ -15,7 +15,7 @@ import com.harryliu.carlie.R
  * @version Feb 25, 2018
  */
 
-class PlaceAdapter(context: Context) : ArrayAdapter<AutocompletePrediction>(context, R.layout.list_item_place) {
+class PlaceAdapter(context: Context) : ArrayAdapter<PlaceViewModel>(context, R.layout.list_item_place) {
     private class ViewHolder {
         var placeNameTextView: TextView? = null
         var placeAddressTextView: TextView? = null
@@ -38,8 +38,8 @@ class PlaceAdapter(context: Context) : ArrayAdapter<AutocompletePrediction>(cont
             newConvertView = convertView
         }
 
-        viewHolder.placeNameTextView!!.text = place.getPrimaryText(null)
-        viewHolder.placeAddressTextView!!.text = place.getSecondaryText(null)
+        viewHolder.placeNameTextView!!.text = place.placeName
+        viewHolder.placeAddressTextView!!.text = place.placeAddress
 
         return newConvertView
     }

@@ -1,5 +1,6 @@
 package com.harryliu.carlie.activities.passengerActivities
 
+import android.content.Intent
 import android.location.Location.distanceBetween
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -21,11 +22,11 @@ import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit
 
-        /**
-         * @author Harry Liu
-         *
-         * @version Feb 24, 2018
-         */
+/**
+ * @author Harry Liu
+ *
+ * @version Feb 24, 2018
+ */
 
 typealias UpdatePlaceOperation = (position: Int) -> Unit
 
@@ -51,6 +52,8 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_auto_complete)
+
+        title = getString(R.string.select_places_title)
 
         mPlaceService = PlaceService(this)
 
@@ -106,7 +109,7 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
                     placeAdapter.notifyDataSetChanged()
 
                     if (mCurrentPickupPlace != null && mCurrentDropOffPlace != null)
-                        requestTrip()
+                        confirmTrip()
                 }
 
         Observable.create<List<PlaceViewModel?>> { subscriber ->
@@ -154,7 +157,7 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
                 }
     }
 
-    private fun requestTrip() {
+    private fun confirmTrip() {
         Log.d("PlaceAutoComplete", "requestTrip")
 
         mPlaceService!!.getPlace(mCurrentDropOffPlace!!.placeId!!)
@@ -166,8 +169,14 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
                         mDropOffSelected = false
                         mDestinationTooFarToast!!.show()
                     } else {
-                        Toast.makeText(this, "We are scheduling your ride", Toast.LENGTH_LONG)
-                                .show()
+                        val intent = Intent(this, ConfirmRouteActivity::class.java)
+
+                        intent.putExtra(ConfirmRouteActivity.ORIGIN_LAT, pickupLocation.latitude)
+                        intent.putExtra(ConfirmRouteActivity.ORIGIN_LNG, pickupLocation.longitude)
+                        intent.putExtra(ConfirmRouteActivity.DESTINATION_LAT, dropOffLocation.latitude)
+                        intent.putExtra(ConfirmRouteActivity.DESTINATION_LNG, dropOffLocation.longitude)
+
+                        startActivity(intent)
                     }
                 }
     }

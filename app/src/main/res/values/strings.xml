@@ -4,4 +4,12 @@
     <string name="drop_off_location">Where to?</string>
     <string name="request_ride">Request Ride</string>
     <string name="destination_too_far">You destination is too far away from campus.</string>
+
+    <string name="confirm_trip">Confirm</string>
+    <string name="cancel_trip">Cancel</string>
+
+    <string name="duration">%1$d minutes</string>
+
+    <string name="select_places_title">Where to?</string>
+    <string name="confirm_ride_title">Confirm ride</string>
 </resources>

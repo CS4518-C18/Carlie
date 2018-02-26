@@ -10,4 +10,5 @@
     <dimen name="drop_off_button_padding_horizontal">40dp</dimen>
     <dimen name="drop_off_button_text_size">30sp</dimen>
     <dimen name="main_map_camera_zoom">12</dimen>
+    <dimen name="option_button_text_size">20sp</dimen>
 </resources>

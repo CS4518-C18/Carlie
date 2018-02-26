@@ -29,15 +29,20 @@
         </activity>
         <activity
             android:name=".activities.passengerActivities.PlaceAutoCompleteActivity"
-            android:parentActivityName=".activities.MainActivity"/>
+            android:parentActivityName=".activities.MainActivity" />
         <activity
             android:name=".activities.passengerActivities.CurrentTripActivity"
-            android:parentActivityName=".activities.passengerActivities.RequestTripActivity"/>
-        <activity android:name=".activities.passengerActivities.RequestTripActivity"/>
+            android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
+        <activity
+            android:name=".activities.passengerActivities.RequestTripActivity"
+            android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.passengerActivities.ConfirmRouteActivity"
+            android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
         <activity
             android:name=".activities.driverActivities.NavigationActivity"
-            android:parentActivityName=".activities.driverActivities.PassengerListActivity"/>
-        <activity android:name=".activities.driverActivities.PassengerListActivity"/>
+            android:parentActivityName=".activities.driverActivities.PassengerListActivity" />
+        <activity android:name=".activities.driverActivities.PassengerListActivity" />
     </application>
 
 </manifest>

@@ -100,6 +100,11 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
         RxView.clicks(cancelRideButton)
                 .subscribe {
+                    val currentTrip = passengerCurrentTrip
+                    if (currentTrip != null) {
+                        DatabaseService.Companion.removeTripFromList(currentTrip);
+                        passengerCurrentTrip = null
+                    }
                     startActivity(mainActivityIntent)
                 }
 

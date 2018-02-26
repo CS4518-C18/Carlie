@@ -4,9 +4,13 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Button
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
+import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
 import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.mapboxsdk.Mapbox
@@ -95,6 +99,7 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     private var mPermissionsManager: PermissionsManager? = null
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
+    private val mCurrentUser = AuthenticationService.Companion.getUser()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +122,21 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
             mMap = mapboxMap
             enableLocationPlugin()
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_common, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.sign_out_item -> {
+                AuthenticationService.Companion.logOut(this)
+                return true
+            }
+        }
+       return super.onOptionsItemSelected(item)
     }
 
     @SuppressWarnings("MissingPermission")

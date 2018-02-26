@@ -132,7 +132,8 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.sign_out_item -> {
-                AuthenticationService.Companion.logOut(this)
+                AuthenticationService.logOut(this)
+                finish()
                 return true
             }
         }

@@ -19,13 +19,13 @@ public class DragDelItem extends LinearLayout {
     public View mContentView;
     public View mMenuView;
     public int mDownX;
-    private int mBaseX;
     public int state = STATE_CLOSE;
+    private int mBaseX;
     private Scroller scroll;
 
     public DragDelItem(View contentView, View menuView) {
         super(contentView.getContext());
-        scroll=new Scroller(getContext());
+        scroll = new Scroller(getContext());
         mContentView = contentView;
         mMenuView = menuView;
         init();

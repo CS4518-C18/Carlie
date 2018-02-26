@@ -1,23 +1,20 @@
 package com.harryliu.carlie.activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.support.v7.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
 import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
 import com.harryliu.carlie.activities.driverActivities.PassengerListActivity
 import com.harryliu.carlie.activities.passengerActivities.RequestTripActivity
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.DatabaseService
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 /**
- * @author Harry Liu
+ * @author Haofan Zhang
  *
  * @version Feb 16, 2018
  */
@@ -49,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         AuthenticationService.removeAuthStateListener(mAuthStateListener)
     }
 
-    private fun onSignedInInitialize () {
+    private fun onSignedInInitialize() {
         val currentUser: FirebaseUser? = AuthenticationService.getFirebaseUser()
         // check if phone exist
         if (currentUser != null) {
@@ -57,11 +54,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun onSignedOutCleanup () {
+    private fun onSignedOutCleanup() {
 
     }
 
-    private fun checkPhoneExist (user:Passenger?) {
+    private fun checkPhoneExist(user: Passenger?) {
         // if exist
         if ((user != null) && (user.phone != null)) {
             // go to their own views
@@ -74,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startUserActivity (user:Passenger) {
+    private fun startUserActivity(user: Passenger) {
         val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)

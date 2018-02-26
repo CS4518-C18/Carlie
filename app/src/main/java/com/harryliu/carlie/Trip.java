@@ -14,7 +14,7 @@ public class Trip {
     Boolean ended = false;
     Long time;
 
-    public Trip (Passenger p, String s, String d) {
+    public Trip(Passenger p, String s, String d) {
         this.passenger = p;
         this.start = s;
         this.destination = d;
@@ -22,15 +22,15 @@ public class Trip {
         this.uid = this.passenger.uid + "-" + this.time.toString();
     }
 
-    public Trip () {
+    public Trip() {
 
     }
 
-    public void startTrip () {
+    public void startTrip() {
         started = true;
     }
 
-    public void endTrip () {
+    public void endTrip() {
         ended = true;
     }
 }

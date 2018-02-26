@@ -13,10 +13,10 @@ import android.widget.ListView;
 
 public class DragDelListView extends ListView {
 
-    private boolean closed=true;
-    private int mDownX,mDownY;
-    private int mTouchPosition,oldPosition=-1;
-    private DragDelItem mTouchView,oldView;
+    private boolean closed = true;
+    private int mDownX, mDownY;
+    private int mTouchPosition, oldPosition = -1;
+    private DragDelItem mTouchView, oldView;
     private Context mContext;
     private boolean moved;
 
@@ -29,12 +29,19 @@ public class DragDelListView extends ListView {
         super(context, attrs, defStyle);
         init(context);
     }
+
     public DragDelListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
+
+    public static int dp2px(int dp, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.getResources().getDisplayMetrics());
+    }
+
     private void init(Context context) {
-        this.mContext=context;
+        this.mContext = context;
     }
 
     @Override
@@ -56,8 +63,8 @@ public class DragDelListView extends ListView {
                 if (mTouchView == null) {
                     break;
                 }
-                mDownX = (int)ev.getX();
-                mDownY = (int)ev.getY();
+                mDownX = (int) ev.getX();
+                mDownY = (int) ev.getY();
 
                 mTouchView.mDownX = mDownX;
                 if (oldPosition != mTouchPosition && !closed) {
@@ -78,7 +85,8 @@ public class DragDelListView extends ListView {
                 }
                 */
                 int dis = (int) (mTouchView.mDownX - ev.getX());
-                if (mTouchView.state == DragDelItem.STATE_OPEN) dis+=mTouchView.mMenuView.getWidth();
+                if (mTouchView.state == DragDelItem.STATE_OPEN)
+                    dis += mTouchView.mMenuView.getWidth();
                 mTouchView.swipe(dis);
                 ev.setAction(MotionEvent.ACTION_CANCEL);
                 moved = true;
@@ -88,7 +96,7 @@ public class DragDelListView extends ListView {
                     break;
                 }
                 if (moved) {
-                    if ((mTouchView.mDownX - ev.getX()) > mTouchView.mMenuView.getWidth()/5) {
+                    if ((mTouchView.mDownX - ev.getX()) > mTouchView.mMenuView.getWidth() / 5) {
                         // open
                         mTouchView.smoothOpenMenu();
                         closed = false;
@@ -105,11 +113,6 @@ public class DragDelListView extends ListView {
                 break;
         }
         return super.onTouchEvent(ev);
-    }
-
-    public static int dp2px(int dp, Context context) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                context.getResources().getDisplayMetrics());
     }
 
 

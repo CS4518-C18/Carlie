@@ -11,14 +11,14 @@ public class Passenger {
     public String name;
     public String type;
 
-    public Passenger (String uid, String phone, String name, String type) {
+    public Passenger(String uid, String phone, String name, String type) {
         this.uid = uid;
         this.phone = phone;
         this.name = name;
         this.type = type;
     }
 
-    public Passenger () {
+    public Passenger() {
 
     }
 }

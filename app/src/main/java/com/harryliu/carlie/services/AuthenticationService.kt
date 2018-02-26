@@ -1,26 +1,15 @@
 package com.harryliu.carlie.services
 
-import com.firebase.ui.auth.AuthUI
-import java.util.Arrays.asList
-import android.support.v4.app.ActivityCompat.startActivityForResult
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.FirebaseAuth
-import android.support.annotation.NonNull
 import android.app.Activity
 import android.content.Context
 import android.widget.Toast
-import com.google.firebase.auth.PhoneAuthProvider
-import com.harryliu.carlie.R
-import com.harryliu.carlie.R.id.edit_phone_number
-import kotlinx.android.synthetic.main.activity_main.*
+import com.firebase.ui.auth.AuthUI
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.*
+import com.harryliu.carlie.Passenger
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.KFunction
-import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.FirebaseException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.harryliu.carlie.Passenger
 
 
 /**
@@ -35,7 +24,7 @@ class AuthenticationService {
         /**
          * specifies the list of authentication methods
          */
-        private val mAuthProviders:List<AuthUI.IdpConfig> = Arrays.asList(
+        private val mAuthProviders: List<AuthUI.IdpConfig> = Arrays.asList(
                 AuthUI.IdpConfig.EmailBuilder().build(),
                 //AuthUI.IdpConfig.PhoneBuilder().build(),
                 AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -51,6 +40,7 @@ class AuthenticationService {
         fun removeAuthStateListener(listener: FirebaseAuth.AuthStateListener) {
             mAuth.removeAuthStateListener(listener)
         }
+
         /**
          * get Firebase authentication manager
          * @return FirebaseAuth instance
@@ -106,9 +96,9 @@ class AuthenticationService {
             }
         }
 
-        fun verifyPhone (phoneNumber: String,
-                                 activity: Activity,
-                                 callback: (String?, Boolean) -> Unit) {
+        fun verifyPhone(phoneNumber: String,
+                        activity: Activity,
+                        callback: (String?, Boolean) -> Unit) {
 
             val mCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
@@ -158,7 +148,7 @@ class AuthenticationService {
                     mCallbacks)
         }
 
-        fun updatePhone (verificationId: String?, code: String) {
+        fun updatePhone(verificationId: String?, code: String) {
             val mFirebaseUser = mAuth.currentUser
             if (mFirebaseUser != null) {
                 val credential = PhoneAuthProvider.getCredential(verificationId!!, code)

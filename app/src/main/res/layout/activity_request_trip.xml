@@ -1,56 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context="com.harryliu.carlie.activities.MainActivity">
 
-    <EditText
-        android:id="@+id/request_trip_start"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.7"
-        android:inputType="textPostalAddress"
-        android:nextFocusDown="@+id/request_trip_destination"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
-
-    <EditText
-        android:id="@+id/request_trip_destination"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.7"
-        android:inputType="textPostalAddress"
-        app:layout_constraintTop_toBottomOf="@id/request_trip_start"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/main_map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        mapbox:mapbox_cameraZoom="@dimen/main_map_camera_zoom"
+        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10" />
 
     <Button
-        android:id="@+id/request_trip_send"
-        android:layout_width="wrap_content"
+        android:id="@+id/request_ride_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/request_trip_destination"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="add trip"/>
-
-    <Button
-        android:id="@+id/request_trip_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/request_trip_send"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="cancel"/>
-
-    <Button
-        android:id="@+id/request_trip_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/request_trip_cancel"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="logout"/>
+        android:layout_marginEnd="@dimen/drop_off_button_margin_side"
+        android:layout_marginStart="@dimen/drop_off_button_margin_side"
+        android:layout_marginTop="@dimen/drop_off_button_margin_top"
+        android:elevation="1dp"
+        android:gravity="center_vertical"
+        android:paddingBottom="@dimen/drop_off_button_padding_vertical"
+        android:paddingEnd="@dimen/drop_off_button_padding_horizontal"
+        android:paddingStart="@dimen/drop_off_button_padding_horizontal"
+        android:paddingTop="@dimen/drop_off_button_padding_vertical"
+        android:text="@string/drop_off_location"
+        android:textSize="@dimen/drop_off_button_text_size"
+        mapbox:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

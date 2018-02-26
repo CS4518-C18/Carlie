@@ -10,17 +10,17 @@ import android.widget.ListView
 import android.widget.TextView
 import com.google.firebase.database.DataSnapshot
 import com.harryliu.carlie.DragDelItem
-import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
 import com.harryliu.carlie.Trip
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.DatabaseService
 import kotlinx.android.synthetic.main.activity_passenger_list.*
-import java.util.ArrayList
+import java.util.*
 
 /**
  * @author Haofan Zhang
- * @version 2/23/18.
+ *
+ * @version Feb 23, 2018
  */
 class PassengerListActivity : AppCompatActivity() {
 
@@ -33,7 +33,7 @@ class PassengerListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_passenger_list)
 
-        val mButtonLogout:Button = passenger_list_logout
+        val mButtonLogout: Button = passenger_list_logout
 
         mButtonLogout.setOnClickListener { _ ->
             AuthenticationService.logOut(mActivity)
@@ -74,53 +74,53 @@ class PassengerListActivity : AppCompatActivity() {
     }
 
     internal inner class AppAdapter constructor(val mAppList: List<Trip>) : BaseAdapter() {
-            override fun getCount(): Int {
-                return mAppList.size
+        override fun getCount(): Int {
+            return mAppList.size
+        }
+
+        override fun getItem(position: Int): Trip {
+            return mAppList[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getView(position: Int, cv: View?, parent: ViewGroup): View {
+
+            val holder: ViewHolder
+            val menuView: View
+            val contentView: View
+            val convertView: View
+            if (cv == null) {
+                contentView = View.inflate(mActivity, R.layout.swipe_content, null)
+                menuView = View.inflate(mActivity, R.layout.swipe_menu, null)
+                convertView = DragDelItem(contentView, menuView)
+                holder = ViewHolder(convertView)
+            } else {
+                convertView = cv
+                holder = convertView.tag as ViewHolder
             }
+            val item = getItem(position)
 
-            override fun getItem(position: Int): Trip {
-                return mAppList[position]
+            // change based on item
+            holder.name.text = item.passenger.name
+            return convertView
+        }
+
+        internal inner class ViewHolder(view: View) {
+            var name: TextView
+            var tv_open: TextView
+            var tv_del: TextView
+
+            init {
+                // set up reference
+                name = view.findViewById(R.id.passenger_list_name)
+                tv_open = view.findViewById(R.id.tv_open)
+                tv_del = view.findViewById(R.id.tv_del)
+                view.tag = this
             }
-
-            override fun getItemId(position: Int): Long {
-                return position.toLong()
-            }
-
-            override fun getView(position: Int, cv: View?, parent: ViewGroup): View {
-
-                val holder: ViewHolder
-                val menuView: View
-                val contentView: View
-                val convertView: View
-                if (cv == null) {
-                    contentView = View.inflate(mActivity, R.layout.swipe_content, null)
-                    menuView = View.inflate(mActivity, R.layout.swipe_menu, null)
-                    convertView = DragDelItem(contentView, menuView)
-                    holder = ViewHolder(convertView)
-                } else {
-                    convertView = cv
-                    holder = convertView.tag as ViewHolder
-                }
-                val item = getItem(position)
-
-                // change based on item
-                holder.name.text = item.passenger.name
-                return convertView
-            }
-
-            internal inner class ViewHolder(view: View) {
-                var name: TextView
-                var tv_open: TextView
-                var tv_del: TextView
-
-                init {
-                    // set up reference
-                    name = view.findViewById(R.id.passenger_list_name)
-                    tv_open = view.findViewById(R.id.tv_open)
-                    tv_del = view.findViewById(R.id.tv_del)
-                    view.tag = this
-                }
-            }
+        }
     }
 
 

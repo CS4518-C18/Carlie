@@ -8,11 +8,10 @@ import com.harryliu.carlie.R;
 
 /**
  * @author Harry Liu
- *
  * @version Feb 16, 2018
  */
 
-public class NavigationActivity extends AppCompatActivity{
+public class NavigationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

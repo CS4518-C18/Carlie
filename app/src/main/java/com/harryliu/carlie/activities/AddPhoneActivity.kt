@@ -4,9 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
 import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
 import com.harryliu.carlie.activities.driverActivities.PassengerListActivity
@@ -14,13 +12,12 @@ import com.harryliu.carlie.activities.passengerActivities.RequestTripActivity
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.DatabaseService
 import kotlinx.android.synthetic.main.activity_add_phone.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * @author Haofan Zhang
  * @version 2/19/18
  */
-class AddPhoneActivity: AppCompatActivity()  {
+class AddPhoneActivity : AppCompatActivity() {
     private val RC_FINISH: Int = 124
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,11 +48,11 @@ class AddPhoneActivity: AppCompatActivity()  {
         }
     }
 
-    private fun storeId (id: String?, passed: Boolean) {
+    private fun storeId(id: String?, passed: Boolean) {
 
     }
 
-    private fun startUserActivity (user:Passenger) {
+    private fun startUserActivity(user: Passenger) {
         val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)

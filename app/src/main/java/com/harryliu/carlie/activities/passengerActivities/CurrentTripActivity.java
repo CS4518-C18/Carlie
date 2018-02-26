@@ -5,16 +5,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.harryliu.carlie.R;
-import com.harryliu.carlie.services.AuthenticationService;
-import com.harryliu.carlie.services.DatabaseService;
 
 /**
  * @author Haofan Zhang
- *
  * @version Feb 16, 2018
  */
 
-public class CurrentTripActivity extends AppCompatActivity{
+public class CurrentTripActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -3,6 +3,8 @@
     package="com.harryliu.carlie">
     <uses-permission android:name="android.permission.INTERNET"/>
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_geo_api_key" />
+
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,20 +30,22 @@
         <activity
             android:name=".activities.AddPhoneActivity">
         </activity>
+
+        <activity
+            android:name=".activities.passengerActivities.PlaceAutoCompleteActivity"
+            android:parentActivityName=".activities.MainActivity" />
         <activity
             android:name=".activities.passengerActivities.CurrentTripActivity"
-            android:parentActivityName=".activities.passengerActivities.RequestTripActivity">
-        </activity>
+            android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
         <activity
-            android:name=".activities.passengerActivities.RequestTripActivity">
-        </activity>
+            android:name=".activities.passengerActivities.RequestTripActivity" />
+        <activity
+            android:name=".activities.passengerActivities.ConfirmRouteActivity"
+            android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
         <activity
             android:name=".activities.driverActivities.NavigationActivity"
-            android:parentActivityName=".activities.driverActivities.PassengerListActivity">
-        </activity>
-        <activity
-            android:name=".activities.driverActivities.PassengerListActivity">
-        </activity>
+            android:parentActivityName=".activities.driverActivities.PassengerListActivity" />
+        <activity android:name=".activities.driverActivities.PassengerListActivity" />
     </application>
 
 </manifest>

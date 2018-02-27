@@ -16,7 +16,7 @@ import com.harryliu.carlie.services.DatabaseService
 /**
  * @author Haofan Zhang
  *
- * @version Feb 16, 2018
+ * @version Feb 18 2018
  */
 class MainActivity : AppCompatActivity() {
 
@@ -30,10 +30,10 @@ class MainActivity : AppCompatActivity() {
                     ::onSignedInInitialize,
                     ::onSignedOutCleanup)
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // mServiceIntent = Intent(applicationContext, NotificationService::class.java)
     }
 
     override fun onResume() {

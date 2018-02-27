@@ -1,15 +1,21 @@
 package com.harryliu.carlie.activities.passengerActivities
 
+import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.harryliu.carlie.BuildConfig
+import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
+import com.harryliu.carlie.Trip
 import com.harryliu.carlie.activities.MainActivity
+import com.harryliu.carlie.services.AuthenticationService
+import com.harryliu.carlie.services.DatabaseService
 import com.harryliu.carlie.services.LocationService
 import com.harryliu.carlie.services.NavigationService
 import com.jakewharton.rxbinding2.view.RxView
@@ -24,6 +30,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
 import com.mapbox.services.android.telemetry.location.LocationEngine
+import kotlinx.android.synthetic.main.activity_confirm_route.*
 
 
 /**
@@ -38,6 +45,10 @@ class ConfirmRouteActivity : AppCompatActivity() {
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
     private var mTextView: TextView? = null
+    private var mConfirmRideButton: Button? = null
+    private var mCancelRideButton: Button? = null
+
+    private val mUser: Passenger = AuthenticationService.getUser()!!
 
     companion object {
         const val ORIGIN_LAT = "origin_lat"
@@ -51,6 +62,30 @@ class ConfirmRouteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_confirm_route)
 
         title = getString(R.string.confirm_ride_title)
+        mConfirmRideButton = confirm_ride_button
+        mCancelRideButton = cancel_ride_button
+
+        val originLat = intent.getDoubleExtra(ORIGIN_LAT, 0.0)
+        val originLng = intent.getDoubleExtra(ORIGIN_LNG, 0.0)
+        val origin = Point.fromLngLat(originLng, originLat)
+
+        val destinationLat = intent.getDoubleExtra(DESTINATION_LAT, 0.0)
+        val destinationLng = intent.getDoubleExtra(DESTINATION_LNG, 0.0)
+        val destination = Point.fromLngLat(destinationLng, destinationLat)
+
+        mConfirmRideButton!!.setOnClickListener({
+            DatabaseService.getTripFromList(mUser.uid,
+                    fun  (trip: Trip?) {
+                        if (trip == null) {
+                            val newTrip = Trip(
+                                    mUser,
+                                    origin.toString(),
+                                    destination.toString())
+                            DatabaseService.addTripToList(newTrip)
+                        }
+                    })
+        })
+
 
         mTextView = findViewById(R.id.duration_text_view)
 
@@ -59,7 +94,8 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
         RxView.clicks(cancelRideButton)
                 .subscribe {
-                    startActivity(mainActivityIntent)
+                    DatabaseService.removeTripFromList(mUser.uid);
+                    quit()
                 }
 
 
@@ -73,14 +109,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
         mMapView!!.getMapAsync({ mapboxMap ->
             mMap = mapboxMap
             enableLocationPlugin()
-
-            val originLat = intent.getDoubleExtra(ORIGIN_LAT, 0.0)
-            val originLng = intent.getDoubleExtra(ORIGIN_LNG, 0.0)
-            val origin = Point.fromLngLat(originLng, originLat)
-
-            val destinationLat = intent.getDoubleExtra(DESTINATION_LAT, 0.0)
-            val destinationLng = intent.getDoubleExtra(DESTINATION_LNG, 0.0)
-            val destination = Point.fromLngLat(destinationLng, destinationLat)
 
 
             Log.d("origin", origin.toString())
@@ -101,11 +129,8 @@ class ConfirmRouteActivity : AppCompatActivity() {
         })
     }
 
-    private fun requestRide(origin: Point, destination: Point) {
 
-    }
-
-    private fun toMinutes(seconds:Double): Int {
+    private fun toMinutes(seconds: Double): Int {
         return (seconds / 60.0).toInt()
     }
 
@@ -180,5 +205,17 @@ class ConfirmRouteActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mMapView!!.onSaveInstanceState(outState)
+    }
+
+
+    override fun onBackPressed() {
+        // do nothing
+    }
+
+    private fun quit () {
+        val returnIntent = Intent()
+        returnIntent.putExtra("quit", 1)
+        setResult(Activity.RESULT_OK, returnIntent)
+        finish()
     }
 }

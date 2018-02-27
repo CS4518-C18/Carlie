@@ -1,10 +1,9 @@
 package com.harryliu.carlie.services;
 
 /**
- * @author Haofan Zhang
+ * @author Yuan Wang
  * @version Feb 16, 2018
  */
 
-public class AuthenticationService {
-
+public class AutoCompleteService {
 }

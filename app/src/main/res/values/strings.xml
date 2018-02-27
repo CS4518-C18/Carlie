@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Carlie</string>
+    <string name="main_enter_phone">Please enter your phone</string>
+    <string name="main_confirm_phone">OK</string>
+    <string name="facebook_application_id" translatable="false">340082356494478</string>
+    <!-- Facebook Application ID, prefixed by 'fb'. Enables Chrome Custom tabs. -->
+    <string name="facebook_login_protocol_scheme" translatable="false">fb340082356494478</string>
+
     <string name="pickup_location">Pickup location</string>
     <string name="drop_off_location">Where to?</string>
     <string name="request_ride">Request Ride</string>
@@ -8,8 +14,10 @@
     <string name="confirm_trip">Confirm</string>
     <string name="cancel_trip">Cancel</string>
 
-    <string name="duration">%1$d minutes</string>
+    <string name="duration">%1$d minutes driving</string>
 
     <string name="select_places_title">Where to?</string>
     <string name="confirm_ride_title">Confirm ride</string>
+
+    <string name="sign_out">Sign out</string>
 </resources>

@@ -6,4 +6,5 @@ package com.harryliu.carlie.services;
  */
 
 public class TripService {
+    //public static Trip passengerCurrentTrip;
 }

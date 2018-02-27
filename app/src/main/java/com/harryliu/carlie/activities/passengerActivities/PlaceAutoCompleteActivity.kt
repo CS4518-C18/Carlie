@@ -1,5 +1,6 @@
 package com.harryliu.carlie.activities.passengerActivities
 
+import android.app.Activity
 import android.content.Intent
 import android.location.Location.distanceBetween
 import android.os.Bundle
@@ -22,15 +23,16 @@ import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit
 
-/**
- * @author Harry Liu
- *
- * @version Feb 24, 2018
- */
+        /**
+         * @author Harry Liu
+         *
+         * @version Feb 24, 2018
+         */
 
 typealias UpdatePlaceOperation = (position: Int) -> Unit
 
 class PlaceAutoCompleteActivity : AppCompatActivity() {
+    private val RC_FINISH: Int = 123
 
     private var mDropOffLocationEditText: EditText? = null
     private var mPlaceService: PlaceService? = null
@@ -176,7 +178,7 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
                         intent.putExtra(ConfirmRouteActivity.DESTINATION_LAT, dropOffLocation.latitude)
                         intent.putExtra(ConfirmRouteActivity.DESTINATION_LNG, dropOffLocation.longitude)
 
-                        startActivity(intent)
+                        startActivityForResult(intent, RC_FINISH)
                     }
                 }
     }
@@ -197,4 +199,14 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
     private fun getMiles(meter: Float): Double {
         return meter * 0.000621371192
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_FINISH && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getIntExtra("quit", 0) == 1) {
+                finish()
+            }
+        }
+    }
+
 }

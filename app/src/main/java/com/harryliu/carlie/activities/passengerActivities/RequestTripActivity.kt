@@ -12,6 +12,7 @@ import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
+import com.harryliu.carlie.services.NotificationService
 import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -135,6 +136,10 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
                 AuthenticationService.logOut(this)
                 finish()
                 return true
+            }
+
+            R.id.test_item -> {
+                NotificationService.showNotification(this, "Test", "Message", this)
             }
         }
        return super.onOptionsItemSelected(item)

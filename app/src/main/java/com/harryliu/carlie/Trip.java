@@ -9,7 +9,11 @@ public class Trip {
     public String uid;
     public Passenger passenger;
     String start;
+    Double startLng;
+    Double startLat;
     String destination;
+    Double destinationLng;
+    Double destinationLat;
     Boolean started = false;
     Boolean ended = false;
     Long time;

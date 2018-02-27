@@ -1,8 +1,10 @@
 package com.harryliu.carlie.activities.passengerActivities
 
+import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
@@ -45,7 +47,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
     private var mTextView: TextView? = null
     private var mConfirmRideButton: Button? = null
     private var mCancelRideButton: Button? = null
-    private var passengerCurrentTrip: Trip? = null
 
     private val mUser: Passenger = AuthenticationService.getUser()!!
 
@@ -72,26 +73,19 @@ class ConfirmRouteActivity : AppCompatActivity() {
         val destinationLng = intent.getDoubleExtra(DESTINATION_LNG, 0.0)
         val destination = Point.fromLngLat(destinationLng, destinationLat)
 
-        mConfirmRideButton!!.setOnClickListener( {
-            if (passengerCurrentTrip == null) {
-                val newTrip = Trip(
-                        mUser,
-                        origin.toString(),
-                        destination.toString())
-                passengerCurrentTrip = newTrip
-                DatabaseService.addTripToList(newTrip)
-            }
+        mConfirmRideButton!!.setOnClickListener({
+            DatabaseService.getTripFromList(mUser.uid,
+                    fun  (trip: Trip?) {
+                        if (trip == null) {
+                            val newTrip = Trip(
+                                    mUser,
+                                    origin.toString(),
+                                    destination.toString())
+                            DatabaseService.addTripToList(newTrip)
+                        }
+                    })
         })
 
-        /*
-        mCancelRideButton!!.setOnClickListener( {
-            val currentTrip = passengerCurrentTrip
-            if (currentTrip != null) {
-                DatabaseService.Companion.removeTripFromList(currentTrip);
-                passengerCurrentTrip = null
-            }
-        });
-        */
 
         mTextView = findViewById(R.id.duration_text_view)
 
@@ -100,12 +94,8 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
         RxView.clicks(cancelRideButton)
                 .subscribe {
-                    val currentTrip = passengerCurrentTrip
-                    if (currentTrip != null) {
-                        DatabaseService.Companion.removeTripFromList(currentTrip);
-                        passengerCurrentTrip = null
-                    }
-                    startActivity(mainActivityIntent)
+                    DatabaseService.removeTripFromList(mUser.uid);
+                    quit()
                 }
 
 
@@ -215,5 +205,17 @@ class ConfirmRouteActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mMapView!!.onSaveInstanceState(outState)
+    }
+
+
+    override fun onBackPressed() {
+        // do nothing
+    }
+
+    private fun quit () {
+        val returnIntent = Intent()
+        returnIntent.putExtra("quit", 1)
+        setResult(Activity.RESULT_OK, returnIntent)
+        finish()
     }
 }

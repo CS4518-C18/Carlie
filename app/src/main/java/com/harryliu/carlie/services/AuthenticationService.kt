@@ -27,8 +27,8 @@ class AuthenticationService {
         private val mAuthProviders: List<AuthUI.IdpConfig> = Arrays.asList(
                 AuthUI.IdpConfig.EmailBuilder().build(),
                 //AuthUI.IdpConfig.PhoneBuilder().build(),
-                AuthUI.IdpConfig.GoogleBuilder().build(),
-                AuthUI.IdpConfig.FacebookBuilder().build()
+                AuthUI.IdpConfig.GoogleBuilder().build()
+                //AuthUI.IdpConfig.FacebookBuilder().build()
                 //new AuthUI.IdpConfig.TwitterBuilder().build()
         )
 

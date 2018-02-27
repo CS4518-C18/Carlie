@@ -32,16 +32,16 @@
         </activity>
 
         <activity
-            android:name=".activities.passengerActivities.PlaceAutoCompleteActivity"
-            android:parentActivityName=".activities.MainActivity" />
-        <activity
             android:name=".activities.passengerActivities.CurrentTripActivity"
             android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
         <activity
-            android:name=".activities.passengerActivities.RequestTripActivity" />
-        <activity
             android:name=".activities.passengerActivities.ConfirmRouteActivity"
             android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
+        <activity
+            android:name=".activities.passengerActivities.PlaceAutoCompleteActivity"
+            android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
+        <activity
+            android:name=".activities.passengerActivities.RequestTripActivity" />
         <activity
             android:name=".activities.driverActivities.NavigationActivity"
             android:parentActivityName=".activities.driverActivities.PassengerListActivity" />

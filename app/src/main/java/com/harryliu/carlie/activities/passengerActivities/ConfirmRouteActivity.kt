@@ -209,6 +209,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
+        quit()
         // do nothing
     }
 

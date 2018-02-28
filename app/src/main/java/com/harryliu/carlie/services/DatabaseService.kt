@@ -1,7 +1,7 @@
 package com.harryliu.carlie.services
 
 import com.google.firebase.database.*
-import com.harryliu.carlie.Passenger
+import com.harryliu.carlie.firebaseModels.PassengerModel
 //import com.harryliu.carlie.Trip
 
 
@@ -24,12 +24,12 @@ class DatabaseService {
          * @param callback: callback function
          */
         fun getUser(uid: String,
-                    callback: (Passenger?) -> Unit) {
+                    callback: (PassengerModel?) -> Unit) {
             val userRef: DatabaseReference = mRef.child("users").child(uid)
             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val user: Passenger? = dataSnapshot.getValue(Passenger::class.java)
+                    val user: PassengerModel? = dataSnapshot.getValue(PassengerModel::class.java)
                     callback(user)
                 }
 
@@ -43,7 +43,7 @@ class DatabaseService {
          * store the user in firebase
          * @param user: passenger object
          */
-        fun storeUser(user: Passenger) {
+        fun storeUser(user: PassengerModel) {
             mRef.child("users").child(user.uid).setValue(user)
         }
 

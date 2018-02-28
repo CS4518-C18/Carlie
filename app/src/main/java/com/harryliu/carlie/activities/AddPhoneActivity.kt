@@ -1,12 +1,11 @@
 package com.harryliu.carlie.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
-import com.harryliu.carlie.Passenger
+import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.R
 import com.harryliu.carlie.activities.driverActivities.PassengerListActivity
 import com.harryliu.carlie.activities.passengerActivities.RequestTripActivity
@@ -33,7 +32,7 @@ class AddPhoneActivity : AppCompatActivity() {
                 val userName = edit_name.text.toString()
                 if (phoneNumber.length == 10) {
                     // store user's phone
-                    val currentUser = Passenger(
+                    val currentUser = PassengerModel(
                             firebaseUser.uid,
                             phoneNumber,
                             userName,
@@ -53,7 +52,7 @@ class AddPhoneActivity : AppCompatActivity() {
 
     }
 
-    private fun startUserActivity(user: Passenger) {
+    private fun startUserActivity(user: PassengerModel) {
         val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)

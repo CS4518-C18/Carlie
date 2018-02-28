@@ -23,13 +23,11 @@ import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit
 
-        /**
-         * @author Harry Liu
-         *
-         * @version Feb 24, 2018
-         */
-
-typealias UpdatePlaceOperation = (position: Int) -> Unit
+/**
+ * @author Harry Liu
+ *
+ * @version Feb 24, 2018
+ */
 
 class PlaceAutoCompleteActivity : AppCompatActivity() {
     private val RC_FINISH: Int = 123
@@ -210,3 +208,6 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
     }
 
 }
+
+
+typealias UpdatePlaceOperation = (position: Int) -> Unit

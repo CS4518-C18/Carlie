@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.harryliu.carlie.Passenger
+import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.R
 import com.harryliu.carlie.activities.driverActivities.PassengerListActivity
 import com.harryliu.carlie.activities.passengerActivities.RequestTripActivity
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun checkPhoneExist(user: Passenger?) {
+    private fun checkPhoneExist(user: PassengerModel?) {
         // if exist
         if ((user != null) && (user.phone != null)) {
             // go to their own views
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startUserActivity(user: Passenger) {
+    private fun startUserActivity(user: PassengerModel) {
         val type = user.type
         if (type == "student") {
             val intent = Intent(this, RequestTripActivity::class.java)

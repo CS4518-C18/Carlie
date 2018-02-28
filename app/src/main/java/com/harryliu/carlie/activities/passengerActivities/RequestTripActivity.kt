@@ -15,8 +15,6 @@ import com.harryliu.carlie.firebaseModels.RealTimeValue
 import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
-import com.harryliu.carlie.services.NotificationService
-import com.harryliu.carlie.services.dataServices.RealTimeDatabaseService
 import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -42,6 +40,8 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     private var mPermissionsManager: PermissionsManager? = null
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
+    var initialTrip: TripModel? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,27 +65,19 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
             enableLocationPlugin()
         })
 
-        // passenger: String, pickupLocation: LocationModel, dropOffLocation: LocationModel, shuttleId: String
+        val pickupLocation = RealTimeValue(LocationModel(42.275258, -71.806504))
+        val dropOffLocation = RealTimeValue(LocationModel(42.273488, -71.810211))
 
-        val pickupLocation = RealTimeValue(null, null, LocationModel(42.275258, -71.806504))
-        val dropOffLocation = RealTimeValue(null, null, LocationModel(42.273488, -71.810211))
+        initialTrip = TripModel("4R4HKefc89Rd9Zs6ccIvRnhvH6Q2", pickupLocation, dropOffLocation, "fd28ebfd-e531-467b-9a8b-fb650d26ccd4")
 
-        val initialTrip = TripModel("4R4HKefc89Rd9Zs6ccIvRnhvH6Q2", pickupLocation, dropOffLocation, "fd28ebfd-e531-467b-9a8b-fb650d26ccd4")
-        val tripValue = RealTimeValue(
-                RealTimeDatabaseService.getRootRef()
-                        .child("trips")
-                        .child("6d7121b4-6fda-40c2-908c-4a55fdc34856"),
-                TripModel::class.java, null)
+        val tripValue = RealTimeValue(initialTrip!!)
 
         tripValue.onChange.subscribe { trip ->
             Log.d("ValueChange", "$trip")
         }
 
-        tripValue.onDownStream().subscribe { trip ->
-            Log.d("DownStream", "$trip")
-        }
-
-        tripValue.next(initialTrip)
+        tripValue.startSync(listOf("/trips/6d7121b4-6fda-40c2-908c-4a55fdc34856/"))
+        initialTrip?.passengerId = "10"
 
     }
 
@@ -103,7 +95,9 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
             }
 
             R.id.test_item -> {
-                NotificationService.showNotification(this, "Test", "Message", this)
+
+                initialTrip!!.cancel = !initialTrip!!.cancel
+//                NotificationService.showNotification(this, "Test", "Message", this)
             }
         }
         return super.onOptionsItemSelected(item)

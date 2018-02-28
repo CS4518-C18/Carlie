@@ -4,21 +4,18 @@ import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.harryliu.carlie.BuildConfig
-import com.harryliu.carlie.Passenger
+import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.R
 //import com.harryliu.carlie.Trip
 import com.harryliu.carlie.activities.MainActivity
 import com.harryliu.carlie.services.AuthenticationService
-import com.harryliu.carlie.services.DatabaseService
 import com.harryliu.carlie.services.LocationService
 import com.harryliu.carlie.services.NavigationService
-import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
@@ -48,7 +45,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
     private var mConfirmRideButton: Button? = null
     private var mCancelRideButton: Button? = null
 
-    private val mUser: Passenger = AuthenticationService.getUser()!!
+    private val mUser: PassengerModel = AuthenticationService.getUser()!!
 
     companion object {
         const val ORIGIN_LAT = "origin_lat"

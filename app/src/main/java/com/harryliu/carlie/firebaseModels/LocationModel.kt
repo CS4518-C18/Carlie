@@ -6,7 +6,7 @@ package com.harryliu.carlie.firebaseModels
  * @version Feb 26, 2018
  */
 
-class LocationModel: FirebaseModel {
+class LocationModel : FirebaseModel {
     var latitude: Double? = null
     var longitude: Double? = null
 
@@ -31,5 +31,9 @@ class LocationModel: FirebaseModel {
                 latitude=$latitude
                 longitude=$longitude
                 """
+    }
+
+    override fun updatePropertyListeners(): Map<String, Pair<IsPropertyUpdatedChecker, UpdatePropertyOperation>> {
+        return mapOf()
     }
 }

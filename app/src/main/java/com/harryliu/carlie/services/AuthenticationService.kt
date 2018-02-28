@@ -7,7 +7,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
-import com.harryliu.carlie.Passenger
+import com.harryliu.carlie.firebaseModels.PassengerModel
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 class AuthenticationService {
     companion object {
         private val mAuth: FirebaseAuth = com.google.firebase.auth.FirebaseAuth.getInstance()
-        private var mUser: Passenger? = null
+        private var mUser: PassengerModel? = null
 
         /**
          * specifies the list of authentication methods
@@ -60,9 +60,9 @@ class AuthenticationService {
          */
         fun getFirebaseUser(): FirebaseUser? = mAuth.currentUser
 
-        fun getUser(): Passenger? = mUser
+        fun getUser(): PassengerModel? = mUser
 
-        fun setUser(user: Passenger) {
+        fun setUser(user: PassengerModel) {
             mUser = user
         }
 

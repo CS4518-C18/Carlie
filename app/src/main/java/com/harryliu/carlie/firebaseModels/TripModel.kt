@@ -10,12 +10,45 @@ package com.harryliu.carlie.firebaseModels
 class TripModel : FirebaseModel {
 
     var passengerId: String? = null
+        set(value) {
+            if (value != null)
+                updateProperty?.invoke("passengerId", value)
+            field = value
+        }
 
     var pickupLocation: LocationModel? = null
+
     var dropOffLocation: LocationModel? = null
+
     var shuttleId: String? = null
+        set(value) {
+            if (value != null)
+                updateProperty?.invoke("shuttleId", value)
+            field = value
+        }
     var shuttleEntered: Boolean = false
-    var passengerLeaved: Boolean = false
+        set(value) {
+            updateProperty?.invoke("shuttleEntered", value)
+            field = value
+        }
+    var passengerLeft: Boolean = false
+        set(value) {
+            updateProperty?.invoke("passengerLeft", value)
+            field = value
+        }
+    var cancel: Boolean = false
+        set(value) {
+            updateProperty?.invoke("cancel", value)
+            field = value
+        }
+
+    var pickupTime: Long? = null
+        set(value) {
+            if (value != null)
+                updateProperty?.invoke("pickupTime", value)
+            field = value
+        }
+
 
     constructor()
 
@@ -44,7 +77,7 @@ class TripModel : FirebaseModel {
                 "passengerId" to passengerId!!,
                 "shuttleId" to shuttleId!!,
                 "shuttleEntered" to shuttleEntered,
-                "passengerLeaved" to passengerLeaved
+                "passengerLeft" to passengerLeft
         )
     }
 
@@ -56,7 +89,13 @@ class TripModel : FirebaseModel {
                 dropOffLocation=$dropOffLocation
                 shuttleId=$shuttleId
                 shuttleEntered=$shuttleEntered
-                passengerLeaved=$passengerLeaved
+                passengerLeft=$passengerLeft
                 """
+    }
+
+    override fun updatePropertyListeners(): Map<String, Pair<IsPropertyUpdatedChecker, UpdatePropertyOperation>> {
+        return mapOf(
+                "passengerId" to Pair({ newValue -> newValue != passengerId }, { newValue -> passengerId = newValue as String })
+        )
     }
 }

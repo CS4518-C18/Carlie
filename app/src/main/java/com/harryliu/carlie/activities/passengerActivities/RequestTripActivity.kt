@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
@@ -47,7 +48,7 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_trip)
 
-        val requestRideButton = findViewById<Button>(R.id.request_ride_button)
+        val requestRideButton = findViewById<View>(R.id.request_ride_button)
 
         val intent = Intent(this, PlaceAutoCompleteActivity::class.java)
 
@@ -72,12 +73,10 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
 
         val tripValue = RealTimeValue(initialTrip!!)
 
-        tripValue.onChange.subscribe { trip ->
-            Log.d("ValueChange", "$trip")
-        }
-
         tripValue.startSync(listOf("/trips/6d7121b4-6fda-40c2-908c-4a55fdc34856/"))
-        initialTrip?.passengerId = "10"
+                .subscribe {
+                    initialTrip?.passengerId = "10"
+                }
 
     }
 

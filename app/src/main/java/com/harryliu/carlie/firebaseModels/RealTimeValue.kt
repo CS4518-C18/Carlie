@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.harryliu.carlie.services.dataServices.RealTimeDatabaseService
+import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 /**
@@ -13,28 +14,31 @@ import io.reactivex.subjects.PublishSubject
  * @version Feb 26, 2018
  */
 
-class RealTimeValue<T : FirebaseModel>(private var currentValue: T?) {
+class RealTimeValue<T : FirebaseModel>(private var currentValue: T) {
     val onChange = PublishSubject.create<T>()
 
-    fun startSync(refs: List<String>) {
-        currentValue?.updateProperty = { name, value ->
-            val map = hashMapOf<String, Any>()
-            refs.forEach { ref ->
-                map["$ref$name"] = value
+    fun startSync(refs: List<String>): Observable<Unit> {
+        return Observable.create { subscriber ->
+            val references = refs.map { ref ->
+                RealTimeDatabaseService.getRootRef()
+                        .child(ref)
             }
 
-            Log.d("RealTimeValue", "SET $name -> $value = $map")
-            RealTimeDatabaseService.getRootRef().updateChildren(map)
-        }
+            fun init() {
+                currentValue.updateProperty = { name, value ->
+                    val map = hashMapOf<String, Any>()
+                    refs.forEach { ref ->
+                        map["$ref$name"] = value
+                    }
 
-        refs.map { ref ->
-            RealTimeDatabaseService.getRootRef()
-                    .child(ref)
-        }
+                    Log.d("RealTimeValue", "SET $name -> $value = $map")
+                    RealTimeDatabaseService.getRootRef().updateChildren(map)
+                }
 
-                .forEach { ref ->
-                    currentValue?.updatePropertyListeners()?.entries
-                            ?.forEach { entry ->
+                references.forEach { ref ->
+                    currentValue.updatePropertyListeners()
+                            .entries
+                            .forEach { entry ->
                                 val propertyName = entry.key
 
                                 val isPropertyUpdated = entry.value.first
@@ -47,20 +51,38 @@ class RealTimeValue<T : FirebaseModel>(private var currentValue: T?) {
                                             }
 
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                val newValue = dataSnapshot.value!!
-                                                if(isPropertyUpdated(newValue)) {
+
+                                                val newValue = dataSnapshot.value
+
+                                                if (newValue != null && isPropertyUpdated(newValue)) {
                                                     Log.d("RealTimeValue", "GET ${ref.key} $propertyName <- $newValue")
                                                     updatePropertyOperation(newValue)
-                                                    onChange.onNext(currentValue!!)
+                                                    onChange.onNext(currentValue)
                                                 }
                                             }
                                         })
                                 entry.key
                             }
                 }
+
+                subscriber.onNext(Unit)
+            }
+
+            var count = refs.size
+            references
+                    .forEach { ref ->
+                        Log.d("Ref", ref.key)
+                        ref.setValue(currentValue.toMap(), { error, _ ->
+                            if (error == null)
+                                count--
+                            if (count == 0)
+                                init()
+                        })
+                    }
+        }
     }
 
     fun getValue(): T {
-        return this.currentValue!!
+        return this.currentValue
     }
 }

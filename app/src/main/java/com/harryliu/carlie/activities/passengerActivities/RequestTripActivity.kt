@@ -73,10 +73,13 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
 
         val tripValue = RealTimeValue(initialTrip!!)
 
-        tripValue.startSync(listOf("/trips/6d7121b4-6fda-40c2-908c-4a55fdc34856/"))
+        val refs = listOf("/trips/6d7121b4-6fda-40c2-908c-4a55fdc34856/")
+        tripValue.push(refs)
                 .subscribe {
+                    tripValue.startSync(refs)
                     initialTrip?.passengerId = "10"
                 }
+
 
     }
 

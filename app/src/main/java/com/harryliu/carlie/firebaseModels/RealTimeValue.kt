@@ -17,25 +17,40 @@ import io.reactivex.subjects.PublishSubject
 class RealTimeValue<T : FirebaseModel>(private var currentValue: T) {
     val onChange = PublishSubject.create<T>()
 
-    fun startSync(refs: List<String>): Observable<Unit> {
+    fun push(refs: List<String>): Observable<Unit> {
         return Observable.create { subscriber ->
-            val references = refs.map { ref ->
+            var count = refs.size
+            refs.map { ref ->
                 RealTimeDatabaseService.getRootRef()
                         .child(ref)
             }
-
-            fun init() {
-                currentValue.updateProperty = { name, value ->
-                    val map = hashMapOf<String, Any>()
-                    refs.forEach { ref ->
-                        map["$ref$name"] = value
+                    .forEach { ref ->
+                        Log.d("Ref", ref.key)
+                        ref.setValue(currentValue.toMap(), { error, _ ->
+                            if (error == null)
+                                count--
+                            if (count == 0)
+                                subscriber.onNext(Unit)
+                        })
                     }
+        }
+    }
 
-                    Log.d("RealTimeValue", "SET $name -> $value = $map")
-                    RealTimeDatabaseService.getRootRef().updateChildren(map)
-                }
+    fun startSync(refs: List<String>) {
+        currentValue.updateProperty = { name, value ->
+            val map = hashMapOf<String, Any>()
+            refs.forEach { ref ->
+                map["$ref$name"] = value
+            }
 
-                references.forEach { ref ->
+            Log.d("RealTimeValue", "SET $name -> $value = $map")
+            RealTimeDatabaseService.getRootRef().updateChildren(map)
+        }
+
+        refs.map { ref ->
+            RealTimeDatabaseService.getRootRef()
+                    .child(ref)
+        }.forEach { ref ->
                     currentValue.updatePropertyListeners()
                             .entries
                             .forEach { entry ->
@@ -64,22 +79,6 @@ class RealTimeValue<T : FirebaseModel>(private var currentValue: T) {
                                 entry.key
                             }
                 }
-
-                subscriber.onNext(Unit)
-            }
-
-            var count = refs.size
-            references
-                    .forEach { ref ->
-                        Log.d("Ref", ref.key)
-                        ref.setValue(currentValue.toMap(), { error, _ ->
-                            if (error == null)
-                                count--
-                            if (count == 0)
-                                init()
-                        })
-                    }
-        }
     }
 
     fun getValue(): T {

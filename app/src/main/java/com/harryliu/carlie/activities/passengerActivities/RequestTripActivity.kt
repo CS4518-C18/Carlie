@@ -4,15 +4,19 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
+import com.harryliu.carlie.firebaseModels.LocationModel
+import com.harryliu.carlie.firebaseModels.RealTimeValue
+import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
 import com.harryliu.carlie.services.NotificationService
+import com.harryliu.carlie.services.dataServices.RealTimeDatabaseService
 import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -24,7 +28,6 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
-import android.app.Activity
 
 
 /**
@@ -61,6 +64,29 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
             mMap = mapboxMap
             enableLocationPlugin()
         })
+
+        // passenger: String, pickupLocation: LocationModel, dropOffLocation: LocationModel, shuttleId: String
+
+        val pickupLocation = RealTimeValue(null, null, LocationModel(42.275258, -71.806504))
+        val dropOffLocation = RealTimeValue(null, null, LocationModel(42.273488, -71.810211))
+
+        val initialTrip = TripModel("4R4HKefc89Rd9Zs6ccIvRnhvH6Q2", pickupLocation, dropOffLocation, "fd28ebfd-e531-467b-9a8b-fb650d26ccd4")
+        val tripValue = RealTimeValue(
+                RealTimeDatabaseService.getRootRef()
+                        .child("trips")
+                        .child("6d7121b4-6fda-40c2-908c-4a55fdc34856"),
+                TripModel::class.java, null)
+
+        tripValue.onChange.subscribe { trip ->
+            Log.d("ValueChange", "$trip")
+        }
+
+        tripValue.onDownStream().subscribe { trip ->
+            Log.d("DownStream", "$trip")
+        }
+
+        tripValue.next(initialTrip)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -80,7 +106,7 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
                 NotificationService.showNotification(this, "Test", "Message", this)
             }
         }
-       return super.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     @SuppressWarnings("MissingPermission")

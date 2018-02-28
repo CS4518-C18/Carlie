@@ -12,7 +12,7 @@ import android.widget.TextView
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.Passenger
 import com.harryliu.carlie.R
-import com.harryliu.carlie.Trip
+//import com.harryliu.carlie.Trip
 import com.harryliu.carlie.activities.MainActivity
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.DatabaseService
@@ -73,30 +73,30 @@ class ConfirmRouteActivity : AppCompatActivity() {
         val destinationLng = intent.getDoubleExtra(DESTINATION_LNG, 0.0)
         val destination = Point.fromLngLat(destinationLng, destinationLat)
 
-        mConfirmRideButton!!.setOnClickListener({
-            DatabaseService.getTripFromList(mUser.uid,
-                    fun  (trip: Trip?) {
-                        if (trip == null) {
-                            val newTrip = Trip(
-                                    mUser,
-                                    origin.toString(),
-                                    destination.toString())
-                            DatabaseService.addTripToList(newTrip)
-                        }
-                    })
-        })
+//        mConfirmRideButton!!.setOnClickListener({
+//            DatabaseService.getTripFromList(mUser.uid,
+//                    fun  (trip: Trip?) {
+//                        if (trip == null) {
+//                            val newTrip = Trip(
+//                                    mUser,
+//                                    origin.toString(),
+//                                    destination.toString())
+//                            DatabaseService.addTripToList(newTrip)
+//                        }
+//                    })
+//        })
 
 
         mTextView = findViewById(R.id.duration_text_view)
 
         val cancelRideButton = findViewById<Button>(R.id.cancel_ride_button)
         val mainActivityIntent = Intent(this, MainActivity::class.java)
-
-        RxView.clicks(cancelRideButton)
-                .subscribe {
-                    DatabaseService.removeTripFromList(mUser.uid);
-                    quit()
-                }
+//
+//        RxView.clicks(cancelRideButton)
+//                .subscribe {
+//                    DatabaseService.removeTripFromList(mUser.uid);
+//                    quit()
+//                }
 
 
         val confirmButton = findViewById<Button>(R.id.confirm_ride_button)

@@ -34,6 +34,6 @@ object NotificationService {
                 .setAutoCancel(true)
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(notificationID, builder.build())
-        return notificationID++
+        return notificationID
     }
 }

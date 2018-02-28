@@ -42,10 +42,9 @@ class TripModel : FirebaseModel {
             field = value
         }
 
-    var pickupTime: Long? = null
+    var pickupTime: Long = -1
         set(value) {
-            if (value != null)
-                updateProperty?.invoke("pickupTime", value)
+            updateProperty?.invoke("pickupTime", value)
             field = value
         }
 
@@ -72,12 +71,14 @@ class TripModel : FirebaseModel {
 
     override fun toMap(): Map<String, Any> {
         return hashMapOf(
+                "passengerId" to passengerId!!,
                 "pickupLocation" to pickupLocation!!.toMap(),
                 "dropOffLocation" to dropOffLocation!!.toMap(),
-                "passengerId" to passengerId!!,
                 "shuttleId" to shuttleId!!,
                 "shuttleEntered" to shuttleEntered,
-                "passengerLeft" to passengerLeft
+                "passengerLeft" to passengerLeft,
+                "cancel" to cancel,
+                "pickupTime" to pickupTime
         )
     }
 
@@ -90,12 +91,20 @@ class TripModel : FirebaseModel {
                 shuttleId=$shuttleId
                 shuttleEntered=$shuttleEntered
                 passengerLeft=$passengerLeft
+                cancel=$cancel
+                pickupTime=$pickupTime
                 """
     }
 
     override fun updatePropertyListeners(): Map<String, Pair<IsPropertyUpdatedChecker, UpdatePropertyOperation>> {
         return mapOf(
-                "passengerId" to Pair({ newValue -> newValue != passengerId }, { newValue -> passengerId = newValue as String })
+                "passengerId" to Pair({ newValue -> newValue != passengerId }, { newValue -> passengerId = newValue as String }),
+                "shuttleId" to Pair({ newValue -> newValue != shuttleId }, { newValue -> shuttleId = newValue as String }),
+                "shuttleEntered" to Pair({ newValue -> newValue != shuttleEntered }, { newValue -> shuttleEntered = newValue as Boolean }),
+                "passengerLeft" to Pair({ newValue -> newValue != passengerLeft }, { newValue -> passengerLeft = newValue as Boolean }),
+                "cancel" to Pair({ newValue -> newValue != cancel }, { newValue -> cancel = newValue as Boolean }),
+                "pickupTime" to Pair({ newValue -> newValue != pickupTime }, { newValue -> pickupTime = newValue as Long })
+
         )
     }
 }

@@ -11,12 +11,36 @@ import io.reactivex.subjects.PublishSubject
  */
 
 @IgnoreExtraProperties
-abstract class FirebaseModel {
+abstract class FireBaseModel {
     var id: String? = null
+
+    @Exclude
+    var isPulling = false
 
     @Exclude
     var updateProperty: ((name: String, value: Any) -> Unit)? = null
 
+    @Exclude
+    protected fun <T: FireBaseModel> updatePropertyValue(newValue: Map<String, Any>, newModel: T, propertyValue: RealTimeValue<T>) {
+        val map = propertyValue.getValue().updatePropertyListeners()
+        newValue.entries.forEach { newValueEntry ->
+
+            val propertyName = newValueEntry.key
+
+            val callbackEntry = map[propertyName]
+            if (callbackEntry != null) {
+
+                val isPropertyUpdated = callbackEntry.first
+                val updatePropertyOperation = callbackEntry.second
+
+                if(isPropertyUpdated(propertyName))
+                    updatePropertyOperation(newValueEntry.value)
+            }
+        }
+        propertyValue.onChange.onNext(newModel)
+    }
+
+    @Exclude
     val onAttributeChange = PublishSubject.create<Pair<String, Any?>>()
 
     @Exclude

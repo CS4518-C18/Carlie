@@ -5,7 +5,7 @@ package com.harryliu.carlie.firebaseModels
  * @version 2/22/18
  */
 
- class PassengerModel: FirebaseModel {
+ class PassengerModel: FireBaseModel {
     var uid: String? = null
     var phone: String? = null
     var name: String? = null

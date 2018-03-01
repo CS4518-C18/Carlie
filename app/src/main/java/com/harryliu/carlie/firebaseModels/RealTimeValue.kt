@@ -14,7 +14,10 @@ import io.reactivex.subjects.PublishSubject
  * @version Feb 26, 2018
  */
 
-class RealTimeValue<T : FirebaseModel>(private var currentValue: T) {
+class RealTimeValue<T : FireBaseModel>
+(private var currentValue: T) {
+
+
     val onChange = PublishSubject.create<T>()
 
     fun push(refs: List<String>): Observable<Unit> {
@@ -36,7 +39,13 @@ class RealTimeValue<T : FirebaseModel>(private var currentValue: T) {
         }
     }
 
+    fun pull(ref: String) {
+        currentValue.isPulling = true
+
+    }
+
     fun startSync(refs: List<String>) {
+
         currentValue.updateProperty = { name, value ->
             val map = hashMapOf<String, Any>()
             refs.forEach { ref ->

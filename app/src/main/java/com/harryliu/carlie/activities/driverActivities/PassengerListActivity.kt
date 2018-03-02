@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.ListView
 import com.harryliu.carlie.R
 import com.harryliu.carlie.services.AuthenticationService
+import com.harryliu.carlie.services.LocationService
 import kotlinx.android.synthetic.main.activity_passenger_list.*
 
 /**
@@ -35,6 +36,15 @@ class PassengerListActivity : AppCompatActivity() {
 //        mListView!!.adapter = mAdapter
 
 //        DatabaseService.bindTripList(::updatePassengerList)
+
+
+        var stop = false
+        LocationService.requestLocationUpdates(this, {
+            location, locationEngine, locationEngineListener ->
+            if(stop) {
+                locationEngine.removeLocationEngineListener(locationEngineListener)
+            }
+        })
     }
 
 //    private fun updatePassengerList(tripSnap: DataSnapshot?, mode: Int) {

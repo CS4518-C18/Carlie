@@ -74,6 +74,7 @@ class TripModel: FireBaseModel {
                     dropOffLocation = value
 //                    onAttributeChange.onNext(Pair("dropOffLocation", value))
                 }
+        updateProperty?.invoke("dropOffLocation", dropOffLocation!!)
     }
 
     fun setPickupLocationValue(pickupLocationValue: RealTimeValue<LocationModel>) {
@@ -84,6 +85,7 @@ class TripModel: FireBaseModel {
                     pickupLocation = value
 //                    onAttributeChange.onNext(Pair("pickupLocation", value))
                 }
+        updateProperty?.invoke("pickupLocation", pickupLocation!!)
     }
 
     override fun toMap(): Map<String, Any> {

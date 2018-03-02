@@ -8,14 +8,21 @@ import java.util.*
  * @version Feb 26, 2018
  */
 
-class LocationModel(): FireBaseModel() {
+class LocationModel: FireBaseModel {
     var latitude: Double? = null
+        set(value) {
+            if (value != null)
+                updateProperty?.invoke("latitude", value)
+            field = value
+        }
     var longitude: Double? = null
+        set(value) {
+            if (value != null)
+                updateProperty?.invoke("longitude", value)
+            field = value
+        }
 
-    constructor(latitude: Double, longitude: Double): this() {
-        this.latitude = latitude
-        this.longitude = longitude
-    }
+    constructor(): super()
 
     override fun toMap(): Map<String, Any> {
         return hashMapOf(

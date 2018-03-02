@@ -8,7 +8,7 @@ import com.google.firebase.database.Exclude
  * @version Mar 1, 2018
  */
 
-class ShuttleModel : FireBaseModel() {
+class ShuttleModel : FireBaseModel {
 
     var currentLocation: LocationModel? = null
 
@@ -20,9 +20,14 @@ class ShuttleModel : FireBaseModel() {
     @Exclude
     private var mTrips = hashMapOf<String, RealTimeValue<TripModel>>()
 
+    constructor() : super() {
+        setCurrentLocationValue(RealTimeValue(LocationModel()))
+    }
+
     private fun setCurrentLocationValue(currentLocationValue: RealTimeValue<LocationModel>) {
         mCurrentLocationValue = currentLocationValue
-        this.currentLocation = currentLocationValue.getValue()
+        currentLocation = currentLocationValue.getValue()
+        updateProperty?.invoke("currentLocation", currentLocation!!)
         mCurrentLocationValue?.onChange!!
                 .subscribe { location ->
                     currentLocation = location

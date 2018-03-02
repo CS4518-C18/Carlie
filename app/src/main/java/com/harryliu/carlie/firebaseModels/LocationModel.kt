@@ -1,18 +1,18 @@
 package com.harryliu.carlie.firebaseModels
 
+import java.util.*
+
 /**
  * @author Harry Liu
  *
  * @version Feb 26, 2018
  */
 
-class LocationModel : FireBaseModel {
+class LocationModel(): FireBaseModel() {
     var latitude: Double? = null
     var longitude: Double? = null
 
-    constructor()
-
-    constructor(latitude: Double, longitude: Double) {
+    constructor(latitude: Double, longitude: Double): this() {
         this.latitude = latitude
         this.longitude = longitude
     }

@@ -1,5 +1,6 @@
 package com.harryliu.carlie.firebaseModels
 
+import android.util.Log
 import com.google.firebase.database.Exclude
 
 
@@ -9,7 +10,7 @@ import com.google.firebase.database.Exclude
  * @version Feb 26, 2018
  */
 
-class TripModel : FireBaseModel {
+class TripModel: FireBaseModel {
 
     var passengerId: String? = null
         set(value) {
@@ -50,30 +51,38 @@ class TripModel : FireBaseModel {
         }
 
     @Exclude
-    var mPickupLocationValue: RealTimeValue<LocationModel>? = null
-    var mDropOffLocationValue: RealTimeValue<LocationModel>? = null
+    private var mPickupLocationValue: RealTimeValue<LocationModel>? = null
 
+    @Exclude
+    private var mDropOffLocationValue: RealTimeValue<LocationModel>? = null
 
-    constructor()
+    constructor(): super() {
+        Log.d("TripModel", "Init")
+        val initialLocation = LocationModel()
+        initialLocation.latitude = 0.0
+        initialLocation.longitude = 0.0
 
-    constructor(passenger: String, pickupLocationValue: RealTimeValue<LocationModel>, dropOffLocationValue: RealTimeValue<LocationModel>, shuttleId: String) {
-        this.passengerId = passenger
-        this.pickupLocation = pickupLocationValue.getValue()
-        this.dropOffLocation = dropOffLocationValue.getValue()
-        this.shuttleId = shuttleId
+        setPickupLocationValue(RealTimeValue(initialLocation))
+        setDropOffLocationValue(RealTimeValue(initialLocation))
+    }
 
+    fun setDropOffLocationValue(dropOffLocationValue: RealTimeValue<LocationModel>) {
+        mDropOffLocationValue = dropOffLocationValue
+        dropOffLocation = mDropOffLocationValue?.getValue()
+        mDropOffLocationValue?.onChange!!
+                .subscribe { value ->
+                    dropOffLocation = value
+//                    onAttributeChange.onNext(Pair("dropOffLocation", value))
+                }
+    }
+
+    fun setPickupLocationValue(pickupLocationValue: RealTimeValue<LocationModel>) {
         mPickupLocationValue = pickupLocationValue
+        pickupLocation = mPickupLocationValue?.getValue()
         mPickupLocationValue?.onChange!!
                 .subscribe { value ->
                     pickupLocation = value
 //                    onAttributeChange.onNext(Pair("pickupLocation", value))
-                }
-
-        mDropOffLocationValue = dropOffLocationValue
-        mPickupLocationValue?.onChange!!
-                .subscribe { value ->
-                    dropOffLocation = value
-//                    onAttributeChange.onNext(Pair("dropOffLocation", value))
                 }
     }
 
@@ -111,7 +120,7 @@ class TripModel : FireBaseModel {
                         { newValue -> passengerId = newValue as String }
                 ),
                 "pickupLocation" to Pair(
-                        { newValue -> newValue != pickupLocation!!.toMap()},
+                        { newValue -> newValue != pickupLocation!!.toMap() },
                         { newValue ->
                             updatePropertyValue(newValue as Map<String, Any>, pickupLocation!!, mPickupLocationValue!!)
                         }),

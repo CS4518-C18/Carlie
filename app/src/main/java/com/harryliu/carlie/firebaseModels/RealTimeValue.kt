@@ -39,11 +39,6 @@ class RealTimeValue<T : FireBaseModel>
         }
     }
 
-    fun pull(ref: String) {
-        currentValue.isPulling = true
-
-    }
-
     fun startSync(refs: List<String>) {
 
         currentValue.updateProperty = { name, value ->

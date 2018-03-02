@@ -2,7 +2,6 @@ package com.harryliu.carlie.services
 
 import com.google.firebase.database.*
 import com.harryliu.carlie.firebaseModels.PassengerModel
-//import com.harryliu.carlie.Trip
 
 
 /**
@@ -29,7 +28,7 @@ class DatabaseService {
             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val user: PassengerModel? = dataSnapshot.getValue(PassengerModel::class.java)
+                    val user = dataSnapshot.getValue(PassengerModel::class.java)
                     callback(user)
                 }
 

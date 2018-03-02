@@ -19,7 +19,7 @@ object LocationService {
     fun requestLocationUpdates(context: Context, onLocationChange: (
             location: Location,
             locationEngine: LocationEngine,
-            locationEngineListener: LocationEngineListener) -> Unit): LostLocationEngine {
+            locationEngineListener: LocationEngineListener) -> Unit): LocationEngine {
         val locationEngine = LostLocationEngine(context)
         locationEngine.priority = LocationEnginePriority.HIGH_ACCURACY
         locationEngine.interval = 200

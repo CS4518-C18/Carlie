@@ -8,11 +8,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
-import com.harryliu.carlie.firebaseModels.LocationModel
 import com.harryliu.carlie.firebaseModels.RealTimeValue
+import com.harryliu.carlie.firebaseModels.ShuttleModel
 import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
@@ -66,22 +65,34 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
             enableLocationPlugin()
         })
 
-        val pickupLocation = RealTimeValue(LocationModel(42.275258, -71.806504))
-        val dropOffLocation = RealTimeValue(LocationModel(42.273488, -71.810211))
+//        val pickupLocation = RealTimeValue(LocationModel(42.275258, -71.806504))
+//        val dropOffLocation = RealTimeValue(LocationModel(42.273488, -71.810211))
+//
+//        initialTrip = TripModel("4R4HKefc89Rd9Zs6ccIvRnhvH6Q2", pickupLocation, dropOffLocation, "fd28ebfd-e531-467b-9a8b-fb650d26ccd4")
+//
+//        val tripValue = RealTimeValue(initialTrip!!)
+//
+//        val refs = listOf("/trips/6d7121b4-6fda-40c2-908c-4a55fdc34856/")
+//        tripValue.onChange.subscribe { trip ->
+//            Log.d("onChange", trip.toString())
+//        }
+//        tripValue.push(refs)
+//                .subscribe {
+//                    tripValue.startSync(refs)
+//                    initialTrip?.passengerId = "10"
+//                }
 
-        initialTrip = TripModel("4R4HKefc89Rd9Zs6ccIvRnhvH6Q2", pickupLocation, dropOffLocation, "fd28ebfd-e531-467b-9a8b-fb650d26ccd4")
+        val initialShuttle = ShuttleModel()
 
-        val tripValue = RealTimeValue(initialTrip!!)
-
-        val refs = listOf("/trips/6d7121b4-6fda-40c2-908c-4a55fdc34856/")
-        tripValue.onChange.subscribe { trip ->
-            Log.d("onChange", trip.toString())
-        }
-        tripValue.push(refs)
-                .subscribe {
-                    tripValue.startSync(refs)
-                    initialTrip?.passengerId = "10"
+        val shuttleValue = RealTimeValue(initialShuttle)
+        shuttleValue.onChange
+                .subscribe { shuttle ->
+                    Log.d("onChange", shuttle.toString())
                 }
+        shuttleValue.startSync(listOf(
+                "/shuttles/shuttle1/"
+        ))
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

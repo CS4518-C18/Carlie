@@ -7,6 +7,8 @@ import android.view.MenuItem
 import android.widget.ListView
 import com.harryliu.carlie.R
 import com.harryliu.carlie.services.AuthenticationService
+import com.harryliu.carlie.services.LocationService
+import kotlinx.android.synthetic.main.activity_passenger_list.*
 import com.harryliu.carlie.services.ShuttleService
 
 /**

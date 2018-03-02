@@ -58,12 +58,16 @@ class TripModel : FireBaseModel {
 
     constructor() : super() {
         Log.d("TripModel", "Init")
-        val initialLocation = LocationModel()
-        initialLocation.latitude = 0.0
-        initialLocation.longitude = 0.0
+        val initialLocation1 = LocationModel()
+        initialLocation1.latitude = 0.0
+        initialLocation1.longitude = 0.0
 
-        setPickupLocationValue(RealTimeValue(initialLocation))
-        setDropOffLocationValue(RealTimeValue(initialLocation))
+        val initialLocation2 = LocationModel()
+        initialLocation2.latitude = 0.0
+        initialLocation2.longitude = 0.0
+
+        setPickupLocationValue(RealTimeValue(initialLocation1))
+        setDropOffLocationValue(RealTimeValue(initialLocation2))
     }
 
     fun setDropOffLocationValue(dropOffLocationValue: RealTimeValue<LocationModel>) {

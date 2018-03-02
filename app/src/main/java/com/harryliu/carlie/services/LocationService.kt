@@ -19,7 +19,8 @@ object LocationService {
     fun requestLocationUpdates(context: Context, interval: Int = 200, onLocationChange: (
             location: Location,
             locationEngine: LocationEngine,
-            locationEngineListener: LocationEngineListener) -> Unit): LocationEngine {
+            locationEngineListener: LocationEngineListener
+    ) -> Unit): LocationEngine {
         val locationEngine = LostLocationEngine(context)
         locationEngine.priority = LocationEnginePriority.HIGH_ACCURACY
         locationEngine.interval = interval
@@ -41,4 +42,5 @@ object LocationService {
         locationEngine.activate()
         return locationEngine
     }
+
 }

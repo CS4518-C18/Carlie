@@ -76,8 +76,6 @@ class RealTimeValue<T : FireBaseModel>
                                         if (newValue != null && isPropertyUpdated(newValue)) {
                                             Log.d("RealTimeValue", "GET ${ref.key} $propertyName <- $newValue")
                                             updatePropertyOperation(newValue)
-                                            Log.d("startSync", "onChange $onChange")
-                                            Log.d("startSync", "currentValue $currentValue")
                                             onChange.onNext(currentValue)
                                         }
                                     }

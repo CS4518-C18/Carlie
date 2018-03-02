@@ -10,7 +10,7 @@ import com.google.firebase.database.Exclude
  * @version Feb 26, 2018
  */
 
-class TripModel: FireBaseModel {
+class TripModel : FireBaseModel {
 
     var passengerId: String? = null
         set(value) {
@@ -56,7 +56,7 @@ class TripModel: FireBaseModel {
     @Exclude
     var mDropOffLocationValue: RealTimeValue<LocationModel>? = null
 
-    constructor(): super() {
+    constructor() : super() {
         Log.d("TripModel", "Init")
         val initialLocation = LocationModel()
         initialLocation.latitude = 0.0

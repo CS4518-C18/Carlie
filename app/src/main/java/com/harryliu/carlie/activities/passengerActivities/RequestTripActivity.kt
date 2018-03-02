@@ -4,15 +4,11 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
-import com.harryliu.carlie.firebaseModels.RealTimeValue
-import com.harryliu.carlie.firebaseModels.ShuttleModel
-import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
 import com.jakewharton.rxbinding2.view.RxView
@@ -40,7 +36,6 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     private var mPermissionsManager: PermissionsManager? = null
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
-    var initialTrip: TripModel? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,12 +74,6 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
                 finish()
                 return true
             }
-
-            R.id.test_item -> {
-
-                initialTrip!!.cancel = !initialTrip!!.cancel
-//                NotificationService.showNotification(this, "Test", "Message", this)
-            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -106,7 +95,7 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
 
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
-        mLocationEngine = LocationService.requestLocationUpdates(this, { location, _, _ ->
+        mLocationEngine = LocationService.requestLocationUpdates(this, 200, { location, _, _ ->
             setCameraPosition(location)
         })
 

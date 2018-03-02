@@ -1,26 +1,21 @@
 package com.harryliu.carlie.activities.passengerActivities
 
+//import com.harryliu.carlie.Trip
 import android.app.Activity
-import android.app.DownloadManager
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.harryliu.carlie.BuildConfig
-import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.R
-//import com.harryliu.carlie.Trip
-import com.harryliu.carlie.activities.MainActivity
-import com.harryliu.carlie.firebaseModels.LocationModel
+import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.firebaseModels.RealTimeValue
 import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.AuthenticationService
@@ -40,9 +35,6 @@ import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import kotlinx.android.synthetic.main.activity_confirm_route.*
 import org.json.JSONObject
-import retrofit2.http.GET
-
-
 
 
 /**
@@ -58,7 +50,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
     private var mLocationEngine: LocationEngine? = null
     private var mTextView: TextView? = null
     private val mUser: PassengerModel = AuthenticationService.getUser()!!
-
 
 
     companion object {
@@ -133,11 +124,11 @@ class ConfirmRouteActivity : AppCompatActivity() {
         })
     }
 
-    private fun requestTrip (initialTrip: TripModel)  {
+    private fun requestTrip(initialTrip: TripModel) {
         sendHTTPRequest(initialTrip, ::setupTrip)
     }
 
-    private fun setupTrip (
+    private fun setupTrip(
             response: String?,
             initialTrip: TripModel) {
 
@@ -165,16 +156,16 @@ class ConfirmRouteActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun sendHTTPRequest (
+    private fun sendHTTPRequest(
             initialTrip: TripModel,
             callback: (String?, TripModel) -> Unit) {
         val queue: RequestQueue = Volley.newRequestQueue(this)
-        val url:String = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
+        val url = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
 
-        val stringRequest: StringRequest = StringRequest(Request.Method.GET, url,
-                Response.Listener<String> {response ->
+        val stringRequest = StringRequest(Request.Method.GET, url,
+                Response.Listener<String> { response ->
                     callback(response, initialTrip)
-                }, Response.ErrorListener {_ ->
+                }, Response.ErrorListener { _ ->
         })
         queue.add(stringRequest)
     }
@@ -194,7 +185,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
-        mLocationEngine = LocationService.requestLocationUpdates(this, { location, _, _ ->
+        mLocationEngine = LocationService.requestLocationUpdates(this, 200, { location, _, _ ->
             setCameraPosition(location)
         })
 
@@ -261,7 +252,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
         quit()
     }
 
-    private fun quit () {
+    private fun quit() {
         val returnIntent = Intent()
         returnIntent.putExtra("quit", 1)
         setResult(Activity.RESULT_OK, returnIntent)

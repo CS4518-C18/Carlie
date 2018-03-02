@@ -16,13 +16,13 @@ import com.mapbox.services.android.telemetry.location.LostLocationEngine
 
 object LocationService {
 
-    fun requestLocationUpdates(context: Context, onLocationChange: (
+    fun requestLocationUpdates(context: Context, interval: Int = 200, onLocationChange: (
             location: Location,
             locationEngine: LocationEngine,
             locationEngineListener: LocationEngineListener) -> Unit): LocationEngine {
         val locationEngine = LostLocationEngine(context)
         locationEngine.priority = LocationEnginePriority.HIGH_ACCURACY
-        locationEngine.interval = 200
+        locationEngine.interval = interval
 
         locationEngine.addLocationEngineListener(object : LocationEngineListener {
             override fun onLocationChanged(location: Location) {

@@ -55,36 +55,36 @@ class RealTimeValue<T : FireBaseModel>
             RealTimeDatabaseService.getRootRef()
                     .child(ref)
         }.forEach { ref ->
-                    currentValue.updatePropertyListeners()
-                            .entries
-                            .forEach { entry ->
-                                val propertyName = entry.key
+            currentValue.updatePropertyListeners()
+                    .entries
+                    .forEach { entry ->
+                        val propertyName = entry.key
 
-                                val isPropertyUpdated = entry.value.first
-                                val updatePropertyOperation = entry.value.second
+                        val isPropertyUpdated = entry.value.first
+                        val updatePropertyOperation = entry.value.second
 
-                                ref.child(propertyName)
-                                        .addValueEventListener(object : ValueEventListener {
-                                            override fun onCancelled(error: DatabaseError) {
-                                                Log.d("Attribute", "downStream: onCancelled")
-                                            }
+                        ref.child(propertyName)
+                                .addValueEventListener(object : ValueEventListener {
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Log.d("Attribute", "downStream: onCancelled")
+                                    }
 
-                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
 
-                                                val newValue = dataSnapshot.value
+                                        val newValue = dataSnapshot.value
 
-                                                if (newValue != null && isPropertyUpdated(newValue)) {
-                                                    Log.d("RealTimeValue", "GET ${ref.key} $propertyName <- $newValue")
-                                                    updatePropertyOperation(newValue)
-                                                    Log.d("startSync", "onChange $onChange")
-                                                    Log.d("startSync", "currentValue $currentValue")
-                                                    onChange.onNext(currentValue)
-                                                }
-                                            }
-                                        })
-                                entry.key
-                            }
-                }
+                                        if (newValue != null && isPropertyUpdated(newValue)) {
+                                            Log.d("RealTimeValue", "GET ${ref.key} $propertyName <- $newValue")
+                                            updatePropertyOperation(newValue)
+                                            Log.d("startSync", "onChange $onChange")
+                                            Log.d("startSync", "currentValue $currentValue")
+                                            onChange.onNext(currentValue)
+                                        }
+                                    }
+                                })
+                        entry.key
+                    }
+        }
     }
 
     fun getValue(): T {

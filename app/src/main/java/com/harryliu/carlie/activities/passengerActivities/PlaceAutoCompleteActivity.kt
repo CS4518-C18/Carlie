@@ -21,6 +21,7 @@ import com.jakewharton.rxbinding2.widget.RxAdapterView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
+import kotlinx.android.synthetic.main.activity_place_auto_complete.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -59,7 +60,7 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
         mDropOffLocationEditText = findViewById(R.id.drop_off_location_edit_text)
         mPickupLocationEditText = findViewById(R.id.pickup_location_edit_text)
 
-        mPlaceAutoCompleteListView = findViewById(R.id.place_autocomplete_listView)
+        mPlaceAutoCompleteListView = place_autocomplete_listView
 
         mDestinationTooFarToast = Toast.makeText(this, getString(R.string.destination_too_far), Toast.LENGTH_LONG)
 

@@ -49,15 +49,14 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         super.onCreate(savedInstanceState)
         setContentView(activity_current_trip)
 
-        val pickupLocation: LocationModel = currentTrip.pickupLocation!!
-        val dropOffLocation: LocationModel = currentTrip.dropOffLocation!!
+        val pickupLocation = currentTrip.pickupLocation!!
+        val dropOffLocation = currentTrip.dropOffLocation!!
 
         val currentTripValue = RealTimeValue(currentTrip)
         val shuttleLocationValue = RealTimeValue(LocationModel())
 
         val currentLocRefs = listOf("/shuttles/${currentTrip.shuttleId}/location/")
         val currentTripRefs = listOf("/shuttles/${currentTrip.shuttleId}/trips/${currentTrip.passengerId}/")
-
 
         currentTripValue.onChange.subscribe { newTrip ->
             if (newTrip.shuttleEntered) {
@@ -97,7 +96,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
         val distanceToShuttleObservable = Observable.create<Float> { subscriber ->
             shuttleLocationValue.onChange.subscribe { newLocation ->
-                println(getDistance(newLocation, pickupLocation).toString())
+                subscriber.onNext(getDistance(newLocation, pickupLocation))
             }
         }
 
@@ -123,7 +122,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
             return (distance / drivingSpeedInMetersPerSecond / 60).toInt()
     }
 
-    private fun getDistance (shuttleLocation: LocationModel, pickupLocation: LocationModel): Float? {
+    private fun getDistance (shuttleLocation: LocationModel, pickupLocation: LocationModel): Float {
         val new_lat = shuttleLocation.latitude
         val new_lng = shuttleLocation.longitude
         //if(new_lat != null && new_lng != null) {

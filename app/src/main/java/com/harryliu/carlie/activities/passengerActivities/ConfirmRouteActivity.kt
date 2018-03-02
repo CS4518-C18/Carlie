@@ -1,6 +1,7 @@
 package com.harryliu.carlie.activities.passengerActivities
 
 import android.app.Activity
+import android.app.DownloadManager
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -8,14 +9,24 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.R
 //import com.harryliu.carlie.Trip
 import com.harryliu.carlie.activities.MainActivity
+import com.harryliu.carlie.firebaseModels.LocationModel
+import com.harryliu.carlie.firebaseModels.RealTimeValue
+import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
 import com.harryliu.carlie.services.NavigationService
+import com.harryliu.carlie.services.dataServices.TripService
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
@@ -28,6 +39,10 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import kotlinx.android.synthetic.main.activity_confirm_route.*
+import org.json.JSONObject
+import retrofit2.http.GET
+
+
 
 
 /**
@@ -42,10 +57,9 @@ class ConfirmRouteActivity : AppCompatActivity() {
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
     private var mTextView: TextView? = null
-    private var mConfirmRideButton: Button? = null
-    private var mCancelRideButton: Button? = null
-
     private val mUser: PassengerModel = AuthenticationService.getUser()!!
+
+
 
     companion object {
         const val ORIGIN_LAT = "origin_lat"
@@ -58,10 +72,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_route)
 
-        title = getString(R.string.confirm_ride_title)
-        mConfirmRideButton = confirm_ride_button
-        mCancelRideButton = cancel_ride_button
-
         val originLat = intent.getDoubleExtra(ORIGIN_LAT, 0.0)
         val originLng = intent.getDoubleExtra(ORIGIN_LNG, 0.0)
         val origin = Point.fromLngLat(originLng, originLat)
@@ -70,37 +80,26 @@ class ConfirmRouteActivity : AppCompatActivity() {
         val destinationLng = intent.getDoubleExtra(DESTINATION_LNG, 0.0)
         val destination = Point.fromLngLat(destinationLng, destinationLat)
 
-//        mConfirmRideButton!!.setOnClickListener({
-//            DatabaseService.getTripFromList(mUser.uid,
-//                    fun  (trip: Trip?) {
-//                        if (trip == null) {
-//                            val newTrip = Trip(
-//                                    mUser,
-//                                    origin.toString(),
-//                                    destination.toString())
-//                            DatabaseService.addTripToList(newTrip)
-//                        }
-//                    })
-//        })
+        title = getString(R.string.confirm_ride_title)
+        val mConfirmRideButton = confirm_ride_button
+        val mCancelRideButton = cancel_ride_button
+        mTextView = duration_text_view
+        mMapView = route_map_view
+
+        mConfirmRideButton.isEnabled = false
 
 
-        mTextView = findViewById(R.id.duration_text_view)
+        mConfirmRideButton.setOnClickListener {
+            requestTrip(mUser.uid!!, originLat, originLng, destinationLat, destinationLng)
+            mCancelRideButton.isEnabled = false
+        }
 
-        val cancelRideButton = findViewById<Button>(R.id.cancel_ride_button)
-        val mainActivityIntent = Intent(this, MainActivity::class.java)
-//
-//        RxView.clicks(cancelRideButton)
-//                .subscribe {
-//                    DatabaseService.removeTripFromList(mUser.uid);
-//                    quit()
-//                }
+        mCancelRideButton.setOnClickListener {
+            quit()
+        }
 
-
-        val confirmButton = findViewById<Button>(R.id.confirm_ride_button)
-        confirmButton.isEnabled = false
 
         Mapbox.getInstance(this, BuildConfig.MAPBOX_ACCESS_TOKEN)
-        mMapView = findViewById(R.id.route_map_view)
         mMapView!!.onCreate(savedInstanceState)
 
         mMapView!!.getMapAsync({ mapboxMap ->
@@ -121,11 +120,69 @@ class ConfirmRouteActivity : AppCompatActivity() {
                         val navigationMapRoute = NavigationMapRoute(null, mMapView!!, mMap!!, R.style.NavigationMapRoute)
                         navigationMapRoute.addRoute(currentRoute)
 
-                        confirmButton.isEnabled = true
+                        mConfirmRideButton.isEnabled = true
                     }
         })
     }
 
+    private fun requestTrip (
+            passengerId: String,
+            originLat: Double,
+            originLng: Double,
+            destinationLat: Double,
+            destinationLng: Double)  {
+        sendHTTPRequest(passengerId, originLat, originLng, destinationLat, destinationLng, ::setupTrip)
+    }
+
+    private fun setupTrip (
+            response: String?,
+            passengerId: String,
+            originLat: Double,
+            originLng: Double,
+            destinationLat: Double,
+            destinationLng: Double) {
+        val tripStat = JSONObject(response)
+        val shuttleId: String = tripStat.getString("shuttleId")
+        val status: String = tripStat.getString("status")
+        System.out.println(shuttleId + status)
+
+        val pickupLocation = RealTimeValue(LocationModel(originLat, originLng))
+        val dropOffLocation = RealTimeValue(LocationModel(destinationLat, destinationLng))
+        val initialTrip = TripModel(passengerId, pickupLocation, dropOffLocation, shuttleId)
+        val tripValue = RealTimeValue(initialTrip)
+
+        val refs = listOf("/shuttles/$shuttleId/trips/$passengerId")
+
+        if (status == "exist") {
+            tripValue.startSync(refs)
+        } else if (status == "new") {
+            tripValue.push(refs)
+                    .subscribe {
+                        tripValue.startSync(refs)
+                    }
+        }
+        TripService.mCurrentTrip = tripValue.getValue()
+        val intent = Intent(this, CurrentTripActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun sendHTTPRequest (
+            passengerId: String,
+            originLat: Double,
+            originLng: Double,
+            destinationLat: Double,
+            destinationLng: Double,
+            callback: (String?, String, Double, Double, Double, Double) -> Unit) {
+        val queue: RequestQueue = Volley.newRequestQueue(this)
+        val url:String = "https://carlie-server.herokuapp.com/passengers/$passengerId/trips/new"
+
+        val stringRequest: StringRequest = StringRequest(Request.Method.GET, url,
+                Response.Listener<String> {response ->
+                    callback(response, passengerId, originLat, originLng, destinationLat, destinationLng)
+                }, Response.ErrorListener {_ ->
+        })
+        queue.add(stringRequest)
+    }
 
     private fun toMinutes(seconds: Double): Int {
         return (seconds / 60.0).toInt()
@@ -206,7 +263,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        // do nothing
+        quit()
     }
 
     private fun quit () {

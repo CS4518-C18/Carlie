@@ -132,9 +132,9 @@ class ConfirmRouteActivity : AppCompatActivity() {
             initialTrip: TripModel) {
 
         val tripStat = JSONObject(response)
-        val shuttleId = tripStat.getString("shuttleId")
-        val status = tripStat.getString("status")
-        System.out.println(shuttleId + status)
+        val shuttleId: String = tripStat.getString("shuttleId")
+        val status: String = tripStat.getString("status")
+        Log.d("response", shuttleId + status)
 
         initialTrip.shuttleId = shuttleId
         val tripValue = RealTimeValue(initialTrip)

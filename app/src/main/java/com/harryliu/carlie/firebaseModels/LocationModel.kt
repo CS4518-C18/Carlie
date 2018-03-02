@@ -40,11 +40,11 @@ class LocationModel : FireBaseModel {
         return mapOf(
                 "latitude" to Pair(
                         { newValue -> newValue != latitude },
-                        { newValue -> latitude = newValue as Double }
+                        { newValue -> latitude = newValue.toString().toDouble() }
                 ),
                 "longitude" to Pair(
                         { newValue -> newValue != longitude },
-                        { newValue -> longitude = newValue as Double }
+                        { newValue -> longitude = newValue.toString().toDouble() }
                 )
         )
     }

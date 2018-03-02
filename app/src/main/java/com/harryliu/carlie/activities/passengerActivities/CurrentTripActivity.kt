@@ -2,7 +2,9 @@ package com.harryliu.carlie.activities.passengerActivities
 
 import android.location.Location
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.harryliu.carlie.BuildConfig
@@ -10,10 +12,13 @@ import com.harryliu.carlie.R
 import com.harryliu.carlie.R.layout.activity_current_trip
 import com.harryliu.carlie.firebaseModels.LocationModel
 import com.harryliu.carlie.firebaseModels.RealTimeValue
-import com.harryliu.carlie.services.AuthenticationService
-import com.harryliu.carlie.services.LocationService
 import com.harryliu.carlie.services.dataServices.TripService
 import com.mapbox.mapboxsdk.Mapbox
+import com.harryliu.carlie.firebaseModels.TripModel
+import com.harryliu.carlie.services.AuthenticationService
+import com.harryliu.carlie.services.GeofenceManager
+import com.harryliu.carlie.services.LocationService
+import com.harryliu.carlie.services.NotificationService
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -39,16 +44,41 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
 
+    private val currentTrip: TripModel = TripService.mCurrentTrip!!
+    private var geofenceManager: GeofenceManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activity_current_trip)
 
-        val currentTrip = TripService.mCurrentTrip!!
+        val pickupLocation = currentTrip.pickupLocation!!
+        val dropOffLocation = currentTrip.dropOffLocation!!
 
-        val shuttleLocation = RealTimeValue(LocationModel())
-        val pickupLocation = currentTrip.pickupLocation
-        val dropOffLocation = currentTrip.dropOffLocation
+        val currentTripValue = RealTimeValue(currentTrip)
+        val shuttleLocationValue = RealTimeValue(LocationModel())
+
+        val currentLocRefs = listOf("/shuttles/${currentTrip.shuttleId}/location/")
+        val currentTripRefs = listOf("/shuttles/${currentTrip.shuttleId}/trips/${currentTrip.passengerId}/")
+
+        currentTripValue.onChange.subscribe { newTrip ->
+            Log.d("onChange", newTrip.toString())
+            if (newTrip.shuttleEntered) {
+                println("shuttle entered")
+                //
+            }
+        }
+
+        shuttleLocationValue.startSync(currentLocRefs)
+        currentTripValue.startSync(currentTripRefs)
+
+        geofenceManager = GeofenceManager(this)
+
+        geofenceManager?.addGeofence(
+                currentTrip.passengerId!!,
+                pickupLocation.latitude,
+                pickupLocation.longitude,
+                ::enterPickupLocation,
+                ::leavePickupLocation)
 
         Mapbox.getInstance(this, BuildConfig.MAPBOX_ACCESS_TOKEN)
         mMapView = map_view
@@ -59,37 +89,53 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
             enableLocationPlugin()
 
             mMap!!.addMarker(MarkerOptions()
-                    .position(LatLng(dropOffLocation!!.latitude, dropOffLocation.longitude))
+                    .position(LatLng(dropOffLocation.latitude, dropOffLocation.longitude))
             )
         })
 
-        val currentLocRefs = listOf("/shuttles/${currentTrip.shuttleId}/location/")
 
 
         val distanceToShuttleObservable = Observable.create<Float> { subscriber ->
-
-            shuttleLocation.onChange.subscribe { newLocation ->
-                val sl = Location("shuttle")
-                sl.latitude = newLocation.latitude
-                sl.longitude = newLocation.longitude
-
-                val pl = Location("pickup")
-                pl.latitude = pickupLocation!!.latitude
-                pl.longitude = pickupLocation.longitude
-                subscriber.onNext(sl.distanceTo(pl))
+            shuttleLocationValue.onChange.subscribe { newLocation ->
+                subscriber.onNext(getDistance(newLocation, pickupLocation))
             }
-
-            shuttleLocation.startSync(currentLocRefs)
         }
 
         distanceToShuttleObservable.subscribe { distance ->
             message_text_view.text = getString(R.string.shuttle_arrive_time, estimateArriveTime(distance))
         }
+
+    }
+
+
+    private fun enterPickupLocation (id: String) {
+        currentTrip.passengerLeft = false
+    }
+
+    private fun leavePickupLocation (id: String) {
+        currentTrip.passengerLeft = true
+        NotificationService.showNotification(this, "title", "msg", this)
     }
 
     private fun estimateArriveTime(distance: Float): Int {
-        val drivingSpeedInMetersPerSecond = 13.4112
-        return (distance / drivingSpeedInMetersPerSecond / 60).toInt()
+            val drivingSpeedInMetersPerSecond = 13.4112
+            return (distance / drivingSpeedInMetersPerSecond / 60).toInt()
+    }
+
+    private fun getDistance (shuttleLocation: LocationModel, pickupLocation: LocationModel): Float {
+        val new_lat = shuttleLocation.latitude
+        val new_lng = shuttleLocation.longitude
+        //if(new_lat != null && new_lng != null) {
+            val sl = Location("shuttle")
+            sl.latitude = new_lat
+            sl.longitude = new_lng
+            val pl = Location("pickup")
+            pl.latitude = pickupLocation.latitude
+            pl.longitude = pickupLocation.longitude
+            val distance = sl.distanceTo(pl)
+            return distance
+        //}
+        //return null
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -178,6 +224,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         if (mLocationEngine != null) {
             mLocationEngine!!.deactivate()
         }
+        geofenceManager?.removeGeofence(currentTrip.passengerId!!)
     }
 
     override fun onLowMemory() {
@@ -193,6 +240,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
     override fun onPause() {
         super.onPause()
         mMapView!!.onPause()
+        TripService.mCurrentTrip = currentTrip
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -205,5 +253,9 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
     override fun onBackPressed() {
         //do nothing
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        super.onSaveInstanceState(outState, outPersistentState)
     }
 }

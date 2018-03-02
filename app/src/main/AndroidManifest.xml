@@ -35,8 +35,7 @@
             android:name=".activities.passengerActivities.PlaceAutoCompleteActivity"
             android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
         <activity
-            android:name=".activities.passengerActivities.CurrentTripActivity"
-            android:parentActivityName=".activities.passengerActivities.RequestTripActivity" />
+            android:name=".activities.passengerActivities.CurrentTripActivity" />
         <activity
             android:name=".activities.passengerActivities.RequestTripActivity" />
         <activity
@@ -45,7 +44,10 @@
         <activity
             android:name=".activities.driverActivities.NavigationActivity"
             android:parentActivityName=".activities.driverActivities.PassengerListActivity" />
+
         <activity android:name=".activities.driverActivities.PassengerListActivity" />
+
+        <service android:name=".services.GeofenceTransitionsIntentService" />
     </application>
 
 </manifest>

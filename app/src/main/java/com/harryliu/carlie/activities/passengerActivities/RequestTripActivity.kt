@@ -1,6 +1,7 @@
 package com.harryliu.carlie.activities.passengerActivities
 
 import android.content.Intent
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -11,8 +12,10 @@ import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
+import com.harryliu.carlie.services.MapUIService
 import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.Polygon
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
@@ -33,6 +36,7 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     private var mMapView: MapView? = null
 
     private var mMap: MapboxMap? = null
+    private var mPolygon: Polygon? = null
     private var mPermissionsManager: PermissionsManager? = null
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
@@ -96,6 +100,13 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
         mLocationEngine = LocationService.requestLocationUpdates(this, 200, { location, _, _ ->
+            if(mPolygon != null) {
+                mMap?.removePolygon(mPolygon!!)
+            }
+//            val polygonOptions = MapUIService.newCirclePolygon(location.longitude, location.latitude, 0.005)
+            val polygonOptions = MapUIService.newSquarePolygon(location.longitude, location.latitude, 0.005)
+            polygonOptions.fillColor(Color.parseColor("#3bb2d0"))
+            mPolygon = mMap?.addPolygon(polygonOptions)
             setCameraPosition(location)
         })
 

@@ -22,8 +22,8 @@ class LocationModel : FireBaseModel {
 
     override fun toMap(): Map<String, Any> {
         return hashMapOf(
-                "latitude" to latitude!!,
-                "longitude" to longitude!!
+                "latitude" to latitude,
+                "longitude" to longitude
         )
     }
 

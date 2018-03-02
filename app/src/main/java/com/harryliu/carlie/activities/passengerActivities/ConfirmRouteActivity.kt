@@ -1,6 +1,5 @@
 package com.harryliu.carlie.activities.passengerActivities
 
-//import com.harryliu.carlie.Trip
 import android.app.Activity
 import android.content.Intent
 import android.location.Location
@@ -133,8 +132,8 @@ class ConfirmRouteActivity : AppCompatActivity() {
             initialTrip: TripModel) {
 
         val tripStat = JSONObject(response)
-        val shuttleId: String = tripStat.getString("shuttleId")
-        val status: String = tripStat.getString("status")
+        val shuttleId = tripStat.getString("shuttleId")
+        val status = tripStat.getString("status")
         System.out.println(shuttleId + status)
 
         initialTrip.shuttleId = shuttleId

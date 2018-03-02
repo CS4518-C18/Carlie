@@ -1,4 +1,4 @@
-package com.harryliu.carlie.services;
+package com.harryliu.carlie.services
 
 import android.app.Activity
 import android.app.PendingIntent

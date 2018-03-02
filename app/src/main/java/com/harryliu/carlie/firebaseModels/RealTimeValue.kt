@@ -44,7 +44,7 @@ class RealTimeValue<T : FireBaseModel>
         currentValue.updateProperty = { name, value ->
             val map = hashMapOf<String, Any>()
             refs.forEach { ref ->
-                map["$ref$name"] = value
+                map["$ref/$name"] = value
             }
 
             Log.d("RealTimeValue", "SET $name -> $value = $map")

@@ -51,10 +51,10 @@ class TripModel: FireBaseModel {
         }
 
     @Exclude
-    private var mPickupLocationValue: RealTimeValue<LocationModel>? = null
+    var mPickupLocationValue: RealTimeValue<LocationModel>? = null
 
     @Exclude
-    private var mDropOffLocationValue: RealTimeValue<LocationModel>? = null
+    var mDropOffLocationValue: RealTimeValue<LocationModel>? = null
 
     constructor(): super() {
         Log.d("TripModel", "Init")

@@ -18,7 +18,7 @@ class ShuttleModel : FireBaseModel {
     var mCurrentLocationValue: RealTimeValue<LocationModel>? = null
 
     @Exclude
-    private var mTrips = hashMapOf<String, RealTimeValue<TripModel>>()
+    var mTrips = hashMapOf<String, RealTimeValue<TripModel>>()
 
     constructor() : super() {
         setCurrentLocationValue(RealTimeValue(LocationModel()))

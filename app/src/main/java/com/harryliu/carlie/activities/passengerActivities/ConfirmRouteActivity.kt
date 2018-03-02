@@ -88,9 +88,17 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
         mConfirmRideButton.isEnabled = false
 
+        val initialTrip = TripModel()
+        initialTrip.passengerId = mUser.uid!!
+
+        initialTrip.pickupLocation?.latitude = originLat
+        initialTrip.pickupLocation?.longitude = originLng
+
+        initialTrip.dropOffLocation?.latitude = destinationLat
+        initialTrip.dropOffLocation?.longitude = destinationLng
 
         mConfirmRideButton.setOnClickListener {
-            requestTrip(mUser.uid!!, originLat, originLng, destinationLat, destinationLng)
+            requestTrip(initialTrip)
             mCancelRideButton.isEnabled = false
         }
 
@@ -125,33 +133,23 @@ class ConfirmRouteActivity : AppCompatActivity() {
         })
     }
 
-    private fun requestTrip (
-            passengerId: String,
-            originLat: Double,
-            originLng: Double,
-            destinationLat: Double,
-            destinationLng: Double)  {
-        sendHTTPRequest(passengerId, originLat, originLng, destinationLat, destinationLng, ::setupTrip)
+    private fun requestTrip (initialTrip: TripModel)  {
+        sendHTTPRequest(initialTrip, ::setupTrip)
     }
 
     private fun setupTrip (
             response: String?,
-            passengerId: String,
-            originLat: Double,
-            originLng: Double,
-            destinationLat: Double,
-            destinationLng: Double) {
+            initialTrip: TripModel) {
+
         val tripStat = JSONObject(response)
         val shuttleId: String = tripStat.getString("shuttleId")
         val status: String = tripStat.getString("status")
         System.out.println(shuttleId + status)
 
-        val pickupLocation = RealTimeValue(LocationModel(originLat, originLng))
-        val dropOffLocation = RealTimeValue(LocationModel(destinationLat, destinationLng))
-        val initialTrip = TripModel(passengerId, pickupLocation, dropOffLocation, shuttleId)
+        initialTrip.shuttleId = shuttleId
         val tripValue = RealTimeValue(initialTrip)
 
-        val refs = listOf("/shuttles/$shuttleId/trips/$passengerId")
+        val refs = listOf("/shuttles/$shuttleId/trips/${initialTrip.passengerId}")
 
         if (status == "exist") {
             tripValue.startSync(refs)
@@ -161,24 +159,21 @@ class ConfirmRouteActivity : AppCompatActivity() {
                         tripValue.startSync(refs)
                     }
         }
-        TripService.mCurrentTrip = tripValue.getValue()
+
+        TripService.mCurrentTrip = initialTrip
         val intent = Intent(this, CurrentTripActivity::class.java)
         startActivity(intent)
     }
 
     private fun sendHTTPRequest (
-            passengerId: String,
-            originLat: Double,
-            originLng: Double,
-            destinationLat: Double,
-            destinationLng: Double,
-            callback: (String?, String, Double, Double, Double, Double) -> Unit) {
+            initialTrip: TripModel,
+            callback: (String?, TripModel) -> Unit) {
         val queue: RequestQueue = Volley.newRequestQueue(this)
-        val url:String = "https://carlie-server.herokuapp.com/passengers/$passengerId/trips/new"
+        val url:String = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
 
         val stringRequest: StringRequest = StringRequest(Request.Method.GET, url,
                 Response.Listener<String> {response ->
-                    callback(response, passengerId, originLat, originLng, destinationLat, destinationLng)
+                    callback(response, initialTrip)
                 }, Response.ErrorListener {_ ->
         })
         queue.add(stringRequest)

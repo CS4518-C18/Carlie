@@ -18,6 +18,8 @@
 
     <string name="select_places_title">Where to?</string>
     <string name="confirm_ride_title">Confirm ride</string>
+    
+    <string name="shuttle_arrive_time">The shuttle is arriving in %1$d minutes</string>
 
     <string name="sign_out">Sign out</string>
 </resources>

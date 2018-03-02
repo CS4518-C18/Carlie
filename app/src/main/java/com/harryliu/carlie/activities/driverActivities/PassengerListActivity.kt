@@ -2,12 +2,14 @@ package com.harryliu.carlie.activities.driverActivities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Button
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ListView
 import com.harryliu.carlie.R
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
 import kotlinx.android.synthetic.main.activity_passenger_list.*
+import com.harryliu.carlie.services.ShuttleService
 
 /**
  * @author Haofan Zhang
@@ -24,27 +26,27 @@ class PassengerListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_passenger_list)
-
-        val mButtonLogout: Button = passenger_list_logout
-
-        mButtonLogout.setOnClickListener { _ ->
-            AuthenticationService.logOut(mActivity)
-            finish()
-        }
-
-        mListView = passenger_list_view
 //        mListView!!.adapter = mAdapter
 
 //        DatabaseService.bindTripList(::updatePassengerList)
 
+        ShuttleService.startLocationUpdates(this, "shuttle1")
+    }
 
-        var stop = false
-        LocationService.requestLocationUpdates(this, {
-            location, locationEngine, locationEngineListener ->
-            if(stop) {
-                locationEngine.removeLocationEngineListener(locationEngineListener)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_common, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.sign_out_item -> {
+                AuthenticationService.logOut(this)
+                finish()
+                return true
             }
-        })
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 //    private fun updatePassengerList(tripSnap: DataSnapshot?, mode: Int) {

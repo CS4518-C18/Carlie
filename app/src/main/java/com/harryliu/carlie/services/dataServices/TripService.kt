@@ -1,7 +1,6 @@
 package com.harryliu.carlie.services.dataServices;
 
 import com.google.firebase.database.DatabaseReference
-import com.harryliu.carlie.firebaseModels.RealTimeValue
 import com.harryliu.carlie.firebaseModels.TripModel
 
 /**
@@ -17,7 +16,7 @@ object TripService {
 
     private val mTripsRef = RealTimeDatabaseService.getRootRef().child("trips")
 
-    fun getTripsRef():  DatabaseReference {
+    fun getTripsRef(): DatabaseReference {
         return mTripsRef
     }
 

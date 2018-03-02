@@ -1,28 +1,24 @@
 package com.harryliu.carlie.firebaseModels
 
-import java.util.*
-
 /**
  * @author Harry Liu
  *
  * @version Feb 26, 2018
  */
 
-class LocationModel: FireBaseModel {
-    var latitude: Double? = null
+class LocationModel : FireBaseModel {
+    var latitude = 0.0
         set(value) {
-            if (value != null)
-                updateProperty?.invoke("latitude", value)
+            updateProperty?.invoke("latitude", value)
             field = value
         }
-    var longitude: Double? = null
+    var longitude = 0.0
         set(value) {
-            if (value != null)
-                updateProperty?.invoke("longitude", value)
+            updateProperty?.invoke("longitude", value)
             field = value
         }
 
-    constructor(): super()
+    constructor() : super()
 
     override fun toMap(): Map<String, Any> {
         return hashMapOf(

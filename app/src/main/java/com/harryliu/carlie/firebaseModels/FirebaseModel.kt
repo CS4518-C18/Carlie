@@ -5,7 +5,6 @@ import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 import io.reactivex.subjects.PublishSubject
 import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * @author Harry Liu
@@ -49,7 +48,7 @@ abstract class FireBaseModel {
             var model: T? = newModelMap[entry.key]
             var propertyValue: RealTimeValue<T>? = propertyValueMap[entry.key]
 
-            if(!propertyValueMap.containsKey(entry.key)) {
+            if (!propertyValueMap.containsKey(entry.key)) {
                 model = modelClass.newInstance()
                 propertyValue = RealTimeValue(model)
             }

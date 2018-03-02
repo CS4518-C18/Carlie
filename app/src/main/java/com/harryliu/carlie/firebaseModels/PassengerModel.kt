@@ -5,13 +5,13 @@ package com.harryliu.carlie.firebaseModels
  * @version 2/22/18
  */
 
- class PassengerModel(): FireBaseModel() {
+class PassengerModel() : FireBaseModel() {
     var uid: String? = null
     var phone: String? = null
     var name: String? = null
     var type: String? = null
 
-    constructor(uid: String, phone: String, name: String, type: String): this() {
+    constructor(uid: String, phone: String, name: String, type: String) : this() {
         this.uid = uid
         this.phone = phone
         this.name = name
@@ -37,7 +37,7 @@ package com.harryliu.carlie.firebaseModels
             """
     }
 
-    override fun updatePropertyListeners():  Map<String, Pair<IsPropertyUpdatedChecker, UpdatePropertyOperation>>  {
+    override fun updatePropertyListeners(): Map<String, Pair<IsPropertyUpdatedChecker, UpdatePropertyOperation>> {
         return mapOf()
     }
 }

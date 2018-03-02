@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.R
 import com.harryliu.carlie.activities.driverActivities.PassengerListActivity
 import com.harryliu.carlie.activities.passengerActivities.RequestTripActivity
+import com.harryliu.carlie.firebaseModels.PassengerModel
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.DatabaseService
 

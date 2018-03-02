@@ -6,6 +6,15 @@ import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngineListener
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority
 import com.mapbox.services.android.telemetry.location.LostLocationEngine
+import android.app.PendingIntent
+import android.content.Intent
+import com.mapzen.android.lost.api.GeofencingRequest
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.mapzen.android.lost.api.LocationServices
+import com.mapzen.android.lost.api.Geofence
+
+
 
 
 /**
@@ -42,4 +51,5 @@ object LocationService {
         locationEngine.activate()
         return locationEngine
     }
+
 }

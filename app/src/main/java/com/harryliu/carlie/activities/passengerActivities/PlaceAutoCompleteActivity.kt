@@ -2,7 +2,7 @@ package com.harryliu.carlie.activities.passengerActivities
 
 import android.app.Activity
 import android.content.Intent
-import android.location.Location.distanceBetween
+import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit
 
 /**
  * @author Harry Liu
- *
  * @version Feb 24, 2018
  */
 
@@ -187,7 +186,7 @@ class PlaceAutoCompleteActivity : AppCompatActivity() {
         val radiusInMiles = 1.0
 
         val results = FloatArray(3)
-        distanceBetween(campusLat, campusLng, to.latitude, to.longitude, results)
+        Location.distanceBetween(campusLat, campusLng, to.latitude, to.longitude, results)
 
         val distance = getMiles(results[0])
 

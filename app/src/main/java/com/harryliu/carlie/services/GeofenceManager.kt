@@ -20,7 +20,7 @@ class GeofenceManager (context: Context) {
         val mExitGeofenceCallbackList: HashMap<String, (String) -> Unit> = HashMap()
     }
 
-    private val GEOFENCE_RADIUS = 1000f
+    private val GEOFENCE_RADIUS = 100f
     private val GEOFENCE_TIMEOUT = Geofence.NEVER_EXPIRE
 
     private var mContext: Context = context

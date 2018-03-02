@@ -1,10 +1,9 @@
 package com.harryliu.carlie.services
 
 import android.app.IntentService
-import com.mapzen.android.lost.api.Geofence
-import com.mapzen.android.lost.api.GeofencingEvent
 import android.content.Intent
-import android.util.Log
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingEvent
 
 
 /**
@@ -26,18 +25,14 @@ class GeofenceTransitionsIntentService: IntentService("GeofenceTransitionsIntent
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
             // Enter geofence
-            println("entered something")
             for (geofence in triggeringGeofences) {
                 val id = geofence.requestId
-                println("exiting $id geofence")
                 GeofenceManager.mEnterGeofenceCallbackList[geofence.requestId]?.invoke(id)
             }
         } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
             // Exit geofence
-            println("exited something")
             for (geofence in triggeringGeofences) {
                 val id = geofence.requestId
-                println("exiting $id geofence")
                 GeofenceManager.mExitGeofenceCallbackList[geofence.requestId]?.invoke(id)
             }
         } else {

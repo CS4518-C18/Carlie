@@ -2,6 +2,7 @@ package com.harryliu.carlie.activities.passengerActivities
 
 import android.location.Location
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -17,6 +18,7 @@ import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.GeofenceManager
 import com.harryliu.carlie.services.LocationService
+import com.harryliu.carlie.services.NotificationService
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -59,11 +61,10 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         val currentTripRefs = listOf("/shuttles/${currentTrip.shuttleId}/trips/${currentTrip.passengerId}/")
 
         currentTripValue.onChange.subscribe { newTrip ->
+            Log.d("onChange", newTrip.toString())
             if (newTrip.shuttleEntered) {
                 println("shuttle entered")
-            }
-            if (newTrip.passengerLeft) {
-                println("passenger left")
+                //
             }
         }
 
@@ -108,13 +109,12 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
 
     private fun enterPickupLocation (id: String) {
-        println("enter")
         currentTrip.passengerLeft = false
     }
 
     private fun leavePickupLocation (id: String) {
-        println("leave")
         currentTrip.passengerLeft = true
+        NotificationService.showNotification(this, "title", "msg", this)
     }
 
     private fun estimateArriveTime(distance: Float): Int {
@@ -253,5 +253,9 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
     override fun onBackPressed() {
         //do nothing
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        super.onSaveInstanceState(outState, outPersistentState)
     }
 }

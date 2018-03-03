@@ -58,36 +58,9 @@ abstract class FireBaseModel {
             model?.updatePropertyValue(newValue, model, propertyValue!!)
             newModelMap[entry.key] = model!!
             propertyValueMap[entry.key] = propertyValue!!
-
-//            Log.d("updatePropertyValue", newValueMap.toString())
-//            Log.d("updatePropertyKey", propertyValueMap.keys.toString())
-//            entry
-//            val value =
-//            val map = .updatePropertyListeners()
-
-//            if(propertyValueMap.containsKey())
         }
 
-//        val map = propertyValue.getValue().updatePropertyListeners()
-//        newValue.entries.forEach { newValueEntry ->
-//
-//            val propertyName = newValueEntry.key
-//
-//            val callbackEntry = map[propertyName]
-//            if (callbackEntry != null) {
-//
-//                val isPropertyUpdated = callbackEntry.first
-//                val updatePropertyOperation = callbackEntry.second
-//
-//                if(isPropertyUpdated(propertyName))
-//                    updatePropertyOperation(newValueEntry.value)
-//            }
-//        }
-//        propertyValue.onChange.onNext(newModel)
     }
-
-    @Exclude
-    val onAttributeChange = PublishSubject.create<Pair<String, Any?>>()
 
     @Exclude
     abstract fun toMap(): Map<String, Any>

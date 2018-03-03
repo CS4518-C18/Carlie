@@ -21,5 +21,7 @@
     
     <string name="shuttle_arrive_time">The shuttle is arriving in %1$d minutes</string>
 
+    <string name="shuttle_is_waiting">Shuttle is now waiting for you!</string>
+
     <string name="sign_out">Sign out</string>
 </resources>

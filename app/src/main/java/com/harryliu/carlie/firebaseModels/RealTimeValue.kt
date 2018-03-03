@@ -39,6 +39,13 @@ class RealTimeValue<T : FireBaseModel>
         }
     }
 
+    fun remove(refs: List<String>) {
+        refs.forEach { ref ->
+            RealTimeDatabaseService.getRootRef()
+                    .child(ref).removeValue()
+        }
+    }
+
     fun startSync(refs: List<String>) {
 
         currentValue.updateProperty = { name, value ->

@@ -260,10 +260,12 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == RC_FINISH && resultCode == Activity.RESULT_OK) {
             if (data != null && data.getIntExtra("quit", 0) == 1) {
                 finish()
             }
         }
+
     }
 }

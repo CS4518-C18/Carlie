@@ -41,7 +41,7 @@ import org.json.JSONObject
  * @version Feb 26, 2018
  */
 class ConfirmRouteActivity : AppCompatActivity() {
-
+    private val RC_FINISH: Int = 123
     private var mMapView: MapView? = null
 
     private var mMap: MapboxMap? = null
@@ -165,7 +165,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
         TripService.mCurrentTrip = initialTrip
         val intent = Intent(this, CurrentTripActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent, RC_FINISH)
     }
 
 
@@ -256,5 +256,14 @@ class ConfirmRouteActivity : AppCompatActivity() {
         returnIntent.putExtra("quit", 1)
         setResult(Activity.RESULT_OK, returnIntent)
         finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_FINISH && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getIntExtra("quit", 0) == 1) {
+                finish()
+            }
+        }
     }
 }

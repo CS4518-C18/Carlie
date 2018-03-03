@@ -14,13 +14,12 @@ import kotlinx.android.synthetic.main.activity_passenger_list.*
 
 /**
  * @author Haofan Zhang
- *
  * @version Feb 23, 2018
  */
 class PassengerListActivity : AppCompatActivity() {
 
     private val mTripList = HashMap<String, RealTimeValue<TripModel>>()
-    private val geofenceManager = GeofenceManager(this)
+    private var geofenceManager : GeofenceManager? = null
     private var mListView: ListView? = null
     private val mActivity = this
 
@@ -31,6 +30,7 @@ class PassengerListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_passenger_list)
 //        mListView!!.adapter = mAdapter
 
+        geofenceManager = GeofenceManager(this)
         DatabaseService.bindTripList(::updatePassengerList)
         ShuttleService.startLocationUpdates(this, "shuttle1")
     }
@@ -69,7 +69,7 @@ class PassengerListActivity : AppCompatActivity() {
                         tripValue.startSync(tripRefs)
                         mTripList[trip.passengerId!!] = tripValue
 
-                        geofenceManager.addGeofence(
+                        geofenceManager!!.addGeofence(
                                 trip.passengerId!!,
                                 trip.pickupLocation!!.latitude,
                                 trip.pickupLocation!!.longitude,
@@ -80,7 +80,7 @@ class PassengerListActivity : AppCompatActivity() {
 
                     DatabaseService.REMOVE -> {
                         mTripList.remove(trip.passengerId)
-                        geofenceManager.removeGeofence(trip.passengerId!!)
+                        geofenceManager!!.removeGeofence(trip.passengerId!!)
                         //mAdapter.notifyDataSetChanged()
                     }
                     DatabaseService.CHANGE -> {

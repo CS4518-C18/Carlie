@@ -13,10 +13,10 @@ import com.harryliu.carlie.R
 import com.harryliu.carlie.R.layout.activity_current_trip
 import com.harryliu.carlie.firebaseModels.LocationModel
 import com.harryliu.carlie.firebaseModels.RealTimeValue
-import com.harryliu.carlie.services.dataServices.TripService
-import com.mapbox.mapboxsdk.Mapbox
 import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.*
+import com.harryliu.carlie.services.dataServices.TripService
+import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.annotations.Polygon
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -96,7 +96,6 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         })
 
 
-
         val distanceToShuttleObservable = Observable.create<Float> { subscriber ->
             shuttleLocationValue.onChange.subscribe { newLocation ->
                 subscriber.onNext(getDistance(newLocation, pickupLocation))
@@ -110,37 +109,37 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
     }
 
     private fun showGeofenceArea(location: LocationModel) {
-        if(mPolygon != null)
+        if (mPolygon != null)
             mMap?.removePolygon(mPolygon!!)
         val polygonOptions = MapUIService.newSquarePolygon(location.longitude, location.latitude, 0.005)
         polygonOptions.fillColor(Color.parseColor("#3bb2d0"))
         mPolygon = mMap?.addPolygon(polygonOptions)
     }
 
-    private fun enterPickupLocation (id: String) {
+    private fun enterPickupLocation(id: String) {
         currentTrip.passengerLeft = false
     }
 
-    private fun leavePickupLocation (id: String) {
+    private fun leavePickupLocation(id: String) {
         currentTrip.passengerLeft = true
         NotificationService.showNotification(this, "title", "msg", this)
     }
 
     private fun estimateArriveTime(distance: Float): Int {
-            val drivingSpeedInMetersPerSecond = 13.4112
-            return (distance / drivingSpeedInMetersPerSecond / 60).toInt()
+        val drivingSpeedInMetersPerSecond = 13.4112
+        return (distance / drivingSpeedInMetersPerSecond / 60).toInt()
     }
 
-    private fun getDistance (shuttleLocation: LocationModel, pickupLocation: LocationModel): Float {
+    private fun getDistance(shuttleLocation: LocationModel, pickupLocation: LocationModel): Float {
         val newLat = shuttleLocation.latitude
         val newLng = shuttleLocation.longitude
-            val sl = Location("shuttle")
-            sl.latitude = newLat
-            sl.longitude = newLng
-            val pl = Location("pickup")
-            pl.latitude = pickupLocation.latitude
-            pl.longitude = pickupLocation.longitude
-            return sl.distanceTo(pl)
+        val sl = Location("shuttle")
+        sl.latitude = newLat
+        sl.longitude = newLng
+        val pl = Location("pickup")
+        pl.latitude = pickupLocation.latitude
+        pl.longitude = pickupLocation.longitude
+        return sl.distanceTo(pl)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

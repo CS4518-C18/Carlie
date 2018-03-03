@@ -10,7 +10,6 @@ import com.harryliu.carlie.R
 import com.harryliu.carlie.firebaseModels.RealTimeValue
 import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.*
-import kotlinx.android.synthetic.main.activity_passenger_list.*
 
 /**
  * @author Haofan Zhang
@@ -86,11 +85,11 @@ class PassengerListActivity : AppCompatActivity() {
         }
     }
 
-    private fun enterPickupLocation (id: String) {
+    private fun enterPickupLocation(id: String) {
         mTripList[id]?.getValue()!!.shuttleEntered = true
     }
 
-    private fun leavePickupLocation (id: String) {
+    private fun leavePickupLocation(id: String) {
     }
 
 //    internal inner class AppAdapter constructor(val mAppList: List<Trip>) : BaseAdapter() {

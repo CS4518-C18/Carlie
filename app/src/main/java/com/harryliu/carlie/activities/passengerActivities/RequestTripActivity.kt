@@ -1,7 +1,6 @@
 package com.harryliu.carlie.activities.passengerActivities
 
 import android.content.Intent
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,10 +11,8 @@ import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
 import com.harryliu.carlie.services.AuthenticationService
 import com.harryliu.carlie.services.LocationService
-import com.harryliu.carlie.services.MapUIService
 import com.jakewharton.rxbinding2.view.RxView
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.annotations.Polygon
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView

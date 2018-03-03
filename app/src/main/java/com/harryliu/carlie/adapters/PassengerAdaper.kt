@@ -7,5 +7,5 @@ import com.daimajia.swipe.adapters.ArraySwipeAdapter
  *
  * @version Mar 2, 2018
  */
-class PassengerAdaper: ArraySwipeAdapter<>() {
-}
+//class PassengerAdaper: ArraySwipeAdapter<>() {
+//}

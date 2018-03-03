@@ -2,12 +2,14 @@ package com.harryliu.carlie.activities.driverActivities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ListView
 import com.google.firebase.database.DataSnapshot
 import com.harryliu.carlie.R
 import com.harryliu.carlie.firebaseModels.RealTimeValue
+import com.harryliu.carlie.firebaseModels.ShuttleModel
 import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.*
 
@@ -19,9 +21,9 @@ import com.harryliu.carlie.services.*
 class PassengerListActivity : AppCompatActivity() {
 
     private val mTripList = HashMap<String, RealTimeValue<TripModel>>()
-    private val geofenceManager = GeofenceManager(this)
+    private var geofenceManager: GeofenceManager? = null
     private var mListView: ListView? = null
-    private val mActivity = this
+    private var mActivity = this
 
 //    private val mAdapter: AppAdapter = AppAdapter(mTripList)
 
@@ -30,8 +32,20 @@ class PassengerListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_passenger_list)
 //        mListView!!.adapter = mAdapter
 
-        DatabaseService.bindTripList(::updatePassengerList)
-        ShuttleService.startLocationUpdates(this, "shuttle1")
+        val shuttleModel = ShuttleModel()
+        val shuttleModelValue = RealTimeValue(shuttleModel)
+
+        shuttleModel.onTripsMapChange.subscribe {childMapChanges ->
+            Log.d("onTripsMapChange", childMapChanges.toString())
+        }
+
+        shuttleModelValue.startSync(listOf("/shuttles/shuttle1/"))
+//        val
+
+//        DatabaseService.bindTripList(::updatePassengerList)
+        ShuttleService.startLocationUpdates(this, shuttleModel.mCurrentLocationValue!!)
+
+        geofenceManager = GeofenceManager(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -61,7 +75,7 @@ class PassengerListActivity : AppCompatActivity() {
                         tripValue.startSync(tripRefs)
                         mTripList[trip.passengerId!!] = tripValue
 
-                        geofenceManager.addGeofence(
+                        geofenceManager?.addGeofence(
                                 trip.passengerId!!,
                                 trip.pickupLocation!!.latitude,
                                 trip.pickupLocation!!.longitude,
@@ -72,7 +86,7 @@ class PassengerListActivity : AppCompatActivity() {
 
                     DatabaseService.REMOVE -> {
                         mTripList.remove(trip.passengerId)
-                        geofenceManager.removeGeofence(trip.passengerId!!)
+                        geofenceManager?.removeGeofence(trip.passengerId!!)
                         //mAdapter.notifyDataSetChanged()
                     }
                     DatabaseService.CHANGE -> {

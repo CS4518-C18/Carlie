@@ -7,6 +7,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
 import com.harryliu.carlie.firebaseModels.PassengerModel
@@ -153,11 +157,11 @@ class ConfirmRouteActivity : AppCompatActivity() {
     private fun sendHTTPRequest(
             initialTrip: TripModel,
             callback: (String?, TripModel) -> Unit) {
-        val queue: RequestQueue = Volley.newRequestQueue(this)
+        val queue = Volley.newRequestQueue(this)
         val url = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
 
         val stringRequest = StringRequest(Request.Method.GET, url,
-                Response.Listener<String> { response ->
+                Response.Listener { response ->
                     callback(response, initialTrip)
                 }, Response.ErrorListener { _ ->
         })

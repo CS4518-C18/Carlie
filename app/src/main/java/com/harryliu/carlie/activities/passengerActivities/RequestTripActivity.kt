@@ -36,7 +36,6 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     private var mMapView: MapView? = null
 
     private var mMap: MapboxMap? = null
-    private var mPolygon: Polygon? = null
     private var mPermissionsManager: PermissionsManager? = null
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
@@ -100,13 +99,6 @@ class RequestTripActivity : AppCompatActivity(), PermissionsListener {
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
         mLocationEngine = LocationService.requestLocationUpdates(this, 200, { location, _, _ ->
-            if(mPolygon != null) {
-                mMap?.removePolygon(mPolygon!!)
-            }
-//            val polygonOptions = MapUIService.newCirclePolygon(location.longitude, location.latitude, 0.005)
-            val polygonOptions = MapUIService.newSquarePolygon(location.longitude, location.latitude, 0.005)
-            polygonOptions.fillColor(Color.parseColor("#3bb2d0"))
-            mPolygon = mMap?.addPolygon(polygonOptions)
             setCameraPosition(location)
         })
 

@@ -1,5 +1,6 @@
 package com.harryliu.carlie.activities.passengerActivities
 
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -19,6 +20,7 @@ import com.mapbox.mapboxsdk.Mapbox
 import com.harryliu.carlie.firebaseModels.TripModel
 import com.harryliu.carlie.services.*
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.annotations.Polygon
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
@@ -45,6 +47,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
     private val currentTrip: TripModel = TripService.mCurrentTrip!!
     private val geofenceManager: GeofenceManager = GeofenceManager(this)
+    private var mPolygon: Polygon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +56,8 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
         val pickupLocation = currentTrip.pickupLocation!!
         val dropOffLocation = currentTrip.dropOffLocation!!
+
+        showGeofenceArea(pickupLocation)
 
         val currentTripValue = RealTimeValue(currentTrip)
         val shuttleLocationValue = RealTimeValue(LocationModel())
@@ -108,6 +113,13 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
     }
 
+    private fun showGeofenceArea(location: LocationModel) {
+        if(mPolygon != null)
+            mMap?.removePolygon(mPolygon!!)
+        val polygonOptions = MapUIService.newSquarePolygon(location.longitude, location.latitude, 0.005)
+        polygonOptions.fillColor(Color.parseColor("#3bb2d0"))
+        mPolygon = mMap?.addPolygon(polygonOptions)
+    }
 
     private fun enterPickupLocation (id: String) {
         currentTrip.passengerLeft = false
@@ -124,19 +136,15 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
     }
 
     private fun getDistance (shuttleLocation: LocationModel, pickupLocation: LocationModel): Float {
-        val new_lat = shuttleLocation.latitude
-        val new_lng = shuttleLocation.longitude
-        //if(new_lat != null && new_lng != null) {
+        val newLat = shuttleLocation.latitude
+        val newLng = shuttleLocation.longitude
             val sl = Location("shuttle")
-            sl.latitude = new_lat
-            sl.longitude = new_lng
+            sl.latitude = newLat
+            sl.longitude = newLng
             val pl = Location("pickup")
             pl.latitude = pickupLocation.latitude
             pl.longitude = pickupLocation.longitude
-            val distance = sl.distanceTo(pl)
-            return distance
-        //}
-        //return null
+            return sl.distanceTo(pl)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

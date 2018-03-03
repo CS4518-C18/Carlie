@@ -59,6 +59,13 @@ class PassengerListActivity : AppCompatActivity() {
                     DatabaseService.ADD -> {
                         val tripValue = RealTimeValue(trip)
                         val tripRefs = listOf("/shuttles/${trip.shuttleId}/trips/${trip.passengerId}/")
+
+                        tripValue.onChange.subscribe { newTrip ->
+                            if (newTrip.passengerLeft) {
+                                NotificationService.showNotification(this, trip.passengerId!!, "left", this)
+                            }
+                        }
+
                         tripValue.startSync(tripRefs)
                         mTripList[trip.passengerId!!] = tripValue
 
@@ -77,9 +84,7 @@ class PassengerListActivity : AppCompatActivity() {
                         //mAdapter.notifyDataSetChanged()
                     }
                     DatabaseService.CHANGE -> {
-                        if (trip.passengerLeft) {
-                            NotificationService.showNotification(this, "title", "msg", this)
-                        }
+
                     }
                 }
             }

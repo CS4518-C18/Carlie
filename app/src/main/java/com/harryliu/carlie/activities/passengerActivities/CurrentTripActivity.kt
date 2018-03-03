@@ -3,10 +3,12 @@ package com.harryliu.carlie.activities.passengerActivities
 import android.location.Location
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.provider.ContactsContract
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
 import com.harryliu.carlie.R.layout.activity_current_trip
@@ -15,10 +17,7 @@ import com.harryliu.carlie.firebaseModels.RealTimeValue
 import com.harryliu.carlie.services.dataServices.TripService
 import com.mapbox.mapboxsdk.Mapbox
 import com.harryliu.carlie.firebaseModels.TripModel
-import com.harryliu.carlie.services.AuthenticationService
-import com.harryliu.carlie.services.GeofenceManager
-import com.harryliu.carlie.services.LocationService
-import com.harryliu.carlie.services.NotificationService
+import com.harryliu.carlie.services.*
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -45,11 +44,12 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
     private var mLocationEngine: LocationEngine? = null
 
     private val currentTrip: TripModel = TripService.mCurrentTrip!!
-    private var geofenceManager: GeofenceManager? = null
+    private val geofenceManager: GeofenceManager = GeofenceManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activity_current_trip)
+        val cancel_ride_button: Button = cancel_ride_button
 
         val pickupLocation = currentTrip.pickupLocation!!
         val dropOffLocation = currentTrip.dropOffLocation!!
@@ -63,17 +63,14 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         currentTripValue.onChange.subscribe { newTrip ->
             Log.d("onChange", newTrip.toString())
             if (newTrip.shuttleEntered) {
-                println("shuttle entered")
-                //
+                NotificationService.showNotification(this, "enter", "good", this)
             }
         }
 
         shuttleLocationValue.startSync(currentLocRefs)
         currentTripValue.startSync(currentTripRefs)
 
-        geofenceManager = GeofenceManager(this)
-
-        geofenceManager?.addGeofence(
+        geofenceManager.addGeofence(
                 currentTrip.passengerId!!,
                 pickupLocation.latitude,
                 pickupLocation.longitude,
@@ -103,6 +100,10 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
         distanceToShuttleObservable.subscribe { distance ->
             message_text_view.text = getString(R.string.shuttle_arrive_time, estimateArriveTime(distance))
+        }
+
+        cancel_ride_button.setOnClickListener { v ->
+            //TODO: cancel ride
         }
 
     }
@@ -224,7 +225,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         if (mLocationEngine != null) {
             mLocationEngine!!.deactivate()
         }
-        geofenceManager?.removeGeofence(currentTrip.passengerId!!)
+        geofenceManager.removeGeofence(currentTrip.passengerId!!)
     }
 
     override fun onLowMemory() {

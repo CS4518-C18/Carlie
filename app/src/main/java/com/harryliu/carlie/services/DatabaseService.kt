@@ -7,9 +7,7 @@ import com.harryliu.carlie.firebaseModels.PassengerModel
 /**
  * @author Haofan Zhang
  */
-class DatabaseService {
-
-    companion object {
+object DatabaseService {
 
         private val mRef: DatabaseReference = FirebaseDatabase.getInstance().reference
         const val ADD: Int = 0
@@ -104,5 +102,4 @@ class DatabaseService {
 //            val logKey = pushedPostRef.key
 //            */
 //        }
-    }
 }

@@ -96,7 +96,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
             quit()
         }
 
-
         Mapbox.getInstance(this, BuildConfig.MAPBOX_ACCESS_TOKEN)
         mMapView!!.onCreate(savedInstanceState)
 
@@ -127,6 +126,20 @@ class ConfirmRouteActivity : AppCompatActivity() {
         sendHTTPRequest(initialTrip, ::setupTrip)
     }
 
+    private fun sendHTTPRequest(
+            initialTrip: TripModel,
+            callback: (String?, TripModel) -> Unit) {
+        val queue: RequestQueue = Volley.newRequestQueue(this)
+        val url = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
+
+        val stringRequest = StringRequest(Request.Method.GET, url,
+                Response.Listener<String> { response ->
+                    callback(response, initialTrip)
+                }, Response.ErrorListener { _ ->
+        })
+        queue.add(stringRequest)
+    }
+
     private fun setupTrip(
             response: String?,
             initialTrip: TripModel) {
@@ -139,7 +152,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
         initialTrip.shuttleId = shuttleId
         val tripValue = RealTimeValue(initialTrip)
 
-        val refs = listOf("/shuttles/$shuttleId/trips/${initialTrip.passengerId}")
+        val refs = listOf("/shuttles/$shuttleId/trips/${initialTrip.passengerId}/")
 
         if (status == "exist") {
             tripValue.startSync(refs)
@@ -155,19 +168,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun sendHTTPRequest(
-            initialTrip: TripModel,
-            callback: (String?, TripModel) -> Unit) {
-        val queue: RequestQueue = Volley.newRequestQueue(this)
-        val url = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
-
-        val stringRequest = StringRequest(Request.Method.GET, url,
-                Response.Listener<String> { response ->
-                    callback(response, initialTrip)
-                }, Response.ErrorListener { _ ->
-        })
-        queue.add(stringRequest)
-    }
 
     private fun toMinutes(seconds: Double): Int {
         return (seconds / 60.0).toInt()

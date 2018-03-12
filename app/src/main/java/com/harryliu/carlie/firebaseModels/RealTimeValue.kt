@@ -3,6 +3,7 @@ package com.harryliu.carlie.firebaseModels
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.ValueEventListener
 import com.harryliu.carlie.services.dataServices.RealTimeDatabaseService
 import io.reactivex.Observable

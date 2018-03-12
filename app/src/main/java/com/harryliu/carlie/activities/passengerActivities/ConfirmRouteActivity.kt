@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
 import com.android.volley.Request
-import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -167,7 +166,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
         val intent = Intent(this, CurrentTripActivity::class.java)
         startActivityForResult(intent, RC_FINISH)
     }
-
 
     private fun toMinutes(seconds: Double): Int {
         return (seconds / 60.0).toInt()

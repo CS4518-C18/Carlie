@@ -19,16 +19,12 @@ import com.daimajia.swipe.util.Attributes
 import com.harryliu.carlie.adapters.PassengerListAdapter
 import kotlinx.android.synthetic.main.activity_passenger_list.view.*
 
-
 /**
  * @author Haofan Zhang
  * @version Feb 23, 2018
  */
 class PassengerListActivity : AppCompatActivity() {
-
     private var geofenceManager : GeofenceManager? = null
-    private var mListView: ListView? = null
-    private val mActivity = this
     var firstTime = true
 
 //    private val mAdapter: AppAdapter = AppAdapter(mTripList)
@@ -37,22 +33,13 @@ class PassengerListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_passenger_list)
 
-        val shuttle = ShuttleModel()
-        val shuttleValue = RealTimeValue(shuttle)
+        val shuttleModel = ShuttleModel()
+        val shuttleModelValue = RealTimeValue(shuttleModel)
 
-        val tripList = passenger_list_view
-        val currentLocRefs = listOf("/shuttles/shuttle1/")
-        shuttleValue.startSync(currentLocRefs)
-
-
-        geofenceManager = GeofenceManager(this)
-        //DatabaseService.bindTripList(::updatePassengerList)
-        ShuttleService.startLocationUpdates(this, "shuttle1")
-
-        //
-        shuttleValue.onChange.subscribe {newShuttle ->
+        shuttleModel.onTripsMapChange.subscribe {childMapChanges ->
+            Log.d("onTripsMapChange", childMapChanges.toString())
             if (firstTime) {
-                val plAdapter = PassengerListAdapter(this, shuttle)
+                val plAdapter = PassengerListAdapter(this, shuttleModel)
                 plAdapter.mode = Attributes.Mode.Single
                 tripList.adapter = plAdapter
                 plAdapter.notifyDataSetChanged()
@@ -60,6 +47,13 @@ class PassengerListActivity : AppCompatActivity() {
             }
         }
 
+        shuttleModelValue.startSync(listOf("/shuttles/shuttle1/"))
+//        val
+
+//        DatabaseService.bindTripList(::updatePassengerList)
+        ShuttleService.startLocationUpdates(this, shuttleModel.mCurrentLocationValue!!)
+
+        geofenceManager = GeofenceManager(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -78,57 +72,11 @@ class PassengerListActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    /*
-    private fun updatePassengerList(tripSnap: DataSnapshot?, mode: Int) {
-        if (tripSnap != null) {
-            Log.d("fuck", "something")
-            val trip = tripSnap.getValue(TripModel::class.java)
-            if (trip != null) {
-                Log.d("fuck", "updated")
-                when (mode) {
-                    DatabaseService.ADD -> {
-
-                        val tripValue = RealTimeValue(trip)
-                        val tripRefs = listOf("/shuttles/${trip.shuttleId}/trips/${trip.passengerId}/")
-
-                        tripValue.onChange.subscribe { newTrip ->
-                            Log.d("fuck", newTrip.toString())
-                            if (newTrip.passengerLeft) {
-                                NotificationService.showNotification(this, trip.passengerId!!, "left", this)
-                            }
-                        }
-
-                        tripValue.startSync(tripRefs)
-                        mTripList[trip.passengerId!!] = tripValue
-
-                        geofenceManager!!.addGeofence(
-                                trip.passengerId!!,
-                                trip.pickupLocation!!.latitude,
-                                trip.pickupLocation!!.longitude,
-                                ::enterPickupLocation,
-                                ::leavePickupLocation)
-                        //mAdapter.notifyDataSetChanged()
-                    }
-
-                    DatabaseService.REMOVE -> {
-                        mTripList.remove(trip.passengerId)
-                        geofenceManager!!.removeGeofence(trip.passengerId!!)
-                        //mAdapter.notifyDataSetChanged()
-                    }
-                    DatabaseService.CHANGE -> {
-                        Log.d("fuck", "changed")
-                    }
-                }
-            }
-        }
-    }
-    */
-
-    private fun enterPickupLocation (id: String) {
-        //mTripList[id]?.getValue()!!.shuttleEntered = true
+    private fun enterPickupLocation(id: String) {
+        mTripList[id]?.getValue()!!.shuttleEntered = true
     }
 
-    private fun leavePickupLocation (id: String) {
+    private fun leavePickupLocation(id: String) {
     }
 
 

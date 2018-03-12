@@ -40,8 +40,13 @@ abstract class FireBaseModel {
     }
 
     @Exclude
-    protected fun <T : FireBaseModel> updatePropertyValueMap(modelClass: Class<T>, newValueMap: Map<String, Map<String, Any>>, newModelMap: HashMap<String, T>, propertyValueMap: HashMap<String, RealTimeValue<T>>) {
+    protected fun <T : FireBaseModel> updatePropertyValueMap(modelClass: Class<T>, newValueMap: Map<String, Map<String, Any>>, newModelMap: HashMap<String, T>, propertyValueMap: HashMap<String, RealTimeValue<T>>): ChildMapChanges<T> {
         Log.d("updatePropertyValueMap", "map $newValueMap")
+
+        val addModels = mutableListOf<Pair<String, Pair<T, RealTimeValue<T>>>>()
+        val updatedModels = mutableListOf<Pair<String, Pair<T, RealTimeValue<T>>>>()
+        val deletedModels = mutableListOf<Pair<String, Pair<T, RealTimeValue<T>>>>()
+
         newValueMap.entries.forEach { entry ->
 
             val newValue = entry.value
@@ -51,15 +56,25 @@ abstract class FireBaseModel {
             if (!propertyValueMap.containsKey(entry.key)) {
                 model = modelClass.newInstance()
                 propertyValue = RealTimeValue(model)
-            }
+                addModels.add(Pair(entry.key, Pair(model, propertyValue)))
+            } else
+                updatedModels.add(Pair(entry.key, Pair(model!!, propertyValue!!)))
 
             Log.d("updatePropertyValueMap", "newValue $newValue")
 
-            model?.updatePropertyValue(newValue, model, propertyValue!!)
+            model?.updatePropertyValue(newValue, model, propertyValue)
             newModelMap[entry.key] = model!!
-            propertyValueMap[entry.key] = propertyValue!!
+            propertyValueMap[entry.key] = propertyValue
         }
 
+        propertyValueMap.entries.forEach { entry ->
+            if (!newValueMap.containsKey(entry.key))
+                deletedModels.add(Pair(entry.key, Pair(newModelMap[entry.key]!!, propertyValueMap[entry.key]!!)))
+            newModelMap.remove(entry.key)
+            propertyValueMap.remove(entry.key)
+        }
+
+        return ChildMapChanges(addModels, updatedModels, deletedModels)
     }
 
     @Exclude

@@ -1,6 +1,7 @@
 package com.harryliu.carlie.firebaseModels
 
 import com.google.firebase.database.Exclude
+import io.reactivex.subjects.PublishSubject
 
 /**
  * @author Harry Liu
@@ -13,6 +14,10 @@ class ShuttleModel : FireBaseModel {
     var currentLocation: LocationModel? = null
 
     var trips = hashMapOf<String, TripModel>()
+
+
+    @Exclude
+    var onTripsMapChange = PublishSubject.create<ChildMapChanges<TripModel>>()
 
     @Exclude
     var mCurrentLocationValue: RealTimeValue<LocationModel>? = null
@@ -76,7 +81,8 @@ class ShuttleModel : FireBaseModel {
                 "trips" to Pair(
                         { newValue -> newValue != tripsToMap() },
                         { newValue ->
-                            updatePropertyValueMap(TripModel::class.java, newValue as Map<String, Map<String, Any>>, trips, mTrips)
+                            val childMapChanges = updatePropertyValueMap(TripModel::class.java, newValue as Map<String, Map<String, Any>>, trips, mTrips)
+                            onTripsMapChange.onNext(childMapChanges)
                         })
         )
 

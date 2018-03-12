@@ -9,13 +9,8 @@ import com.harryliu.carlie.firebaseModels.RealTimeValue
  * @version Mar 2, 2018
  */
 object ShuttleService {
-    fun startLocationUpdates(context: Context, shuttleID: String) {
-        val shuttleLocation = LocationModel()
-        val shuttleLocationValue = RealTimeValue(shuttleLocation)
-        val currentLocRefs = listOf("/shuttles/$shuttleID/location/")
-
-        shuttleLocationValue.startSync(currentLocRefs)
-
+    fun startLocationUpdates(context: Context, shuttleLocationValue: RealTimeValue<LocationModel>) {
+        val shuttleLocation = shuttleLocationValue.getValue()
         LocationService.requestLocationUpdates(context, 1000, { location, _, _ ->
             shuttleLocation.latitude = location.latitude
             shuttleLocation.longitude = location.longitude

@@ -1,13 +1,17 @@
 package com.harryliu.carlie.activities.passengerActivities
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.provider.ContactsContract
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import com.harryliu.carlie.BuildConfig
 import com.harryliu.carlie.R
 import com.harryliu.carlie.R.layout.activity_current_trip
@@ -43,39 +47,41 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
 
+
     private val currentTrip: TripModel = TripService.mCurrentTrip!!
+    private val currentTripValue = RealTimeValue(currentTrip)
+    private val currentTripRefs = listOf("/shuttles/${currentTrip.shuttleId}/trips/${currentTrip.passengerId}/")
+
     private var geofenceManager: GeofenceManager? = null
     private var mPolygon: Polygon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activity_current_trip)
+        val cancel_ride_button: Button = cancel_ride_button
+
+        geofenceManager = GeofenceManager(this)
 
         val pickupLocation = currentTrip.pickupLocation!!
         val dropOffLocation = currentTrip.dropOffLocation!!
 
         showGeofenceArea(pickupLocation)
 
-        val currentTripValue = RealTimeValue(currentTrip)
         val shuttleLocationValue = RealTimeValue(LocationModel())
 
         val currentLocRefs = listOf("/shuttles/${currentTrip.shuttleId}/location/")
-        val currentTripRefs = listOf("/shuttles/${currentTrip.shuttleId}/trips/${currentTrip.passengerId}/")
 
         currentTripValue.onChange.subscribe { newTrip ->
             Log.d("onChange", newTrip.toString())
             if (newTrip.shuttleEntered) {
-                println("shuttle entered")
-                //
+                NotificationService.showNotification(this, "enter", "good", this)
             }
         }
 
         shuttleLocationValue.startSync(currentLocRefs)
         currentTripValue.startSync(currentTripRefs)
 
-        geofenceManager = GeofenceManager(this)
-
-        geofenceManager?.addGeofence(
+        geofenceManager!!.addGeofence(
                 currentTrip.passengerId!!,
                 pickupLocation.latitude,
                 pickupLocation.longitude,
@@ -104,6 +110,11 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
         distanceToShuttleObservable.subscribe { distance ->
             message_text_view.text = getString(R.string.shuttle_arrive_time, estimateArriveTime(distance))
+        }
+
+        cancel_ride_button.setOnClickListener { _ ->
+            currentTripValue.remove(currentTripRefs)
+            finish()
         }
 
     }
@@ -151,7 +162,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         when (item.itemId) {
             R.id.sign_out_item -> {
                 AuthenticationService.logOut(this)
-                finish()
+                quit()
                 return true
             }
         }
@@ -195,7 +206,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         if (granted) {
             enableLocationPlugin()
         } else {
-            finish()
+            quit()
         }
     }
 
@@ -228,7 +239,7 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         if (mLocationEngine != null) {
             mLocationEngine!!.deactivate()
         }
-        geofenceManager?.removeGeofence(currentTrip.passengerId!!)
+        geofenceManager!!.removeGeofence(currentTrip.passengerId!!)
     }
 
     override fun onLowMemory() {
@@ -259,7 +270,10 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         //do nothing
     }
 
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
-        super.onSaveInstanceState(outState, outPersistentState)
+    private fun quit() {
+        val returnIntent = Intent()
+        returnIntent.putExtra("quit", 1)
+        setResult(Activity.RESULT_OK, returnIntent)
+        finish()
     }
 }

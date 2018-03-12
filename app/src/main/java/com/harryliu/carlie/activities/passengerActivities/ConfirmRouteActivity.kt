@@ -40,7 +40,7 @@ import org.json.JSONObject
  * @version Feb 26, 2018
  */
 class ConfirmRouteActivity : AppCompatActivity() {
-
+    private val RC_FINISH: Int = 123
     private var mMapView: MapView? = null
 
     private var mMap: MapboxMap? = null
@@ -95,7 +95,6 @@ class ConfirmRouteActivity : AppCompatActivity() {
             quit()
         }
 
-
         Mapbox.getInstance(this, BuildConfig.MAPBOX_ACCESS_TOKEN)
         mMapView!!.onCreate(savedInstanceState)
 
@@ -126,6 +125,20 @@ class ConfirmRouteActivity : AppCompatActivity() {
         sendHTTPRequest(initialTrip, ::setupTrip)
     }
 
+    private fun sendHTTPRequest(
+            initialTrip: TripModel,
+            callback: (String?, TripModel) -> Unit) {
+        val queue: RequestQueue = Volley.newRequestQueue(this)
+        val url = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
+
+        val stringRequest = StringRequest(Request.Method.GET, url,
+                Response.Listener<String> { response ->
+                    callback(response, initialTrip)
+                }, Response.ErrorListener { _ ->
+        })
+        queue.add(stringRequest)
+    }
+
     private fun setupTrip(
             response: String?,
             initialTrip: TripModel) {
@@ -138,7 +151,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
         initialTrip.shuttleId = shuttleId
         val tripValue = RealTimeValue(initialTrip)
 
-        val refs = listOf("/shuttles/$shuttleId/trips/${initialTrip.passengerId}")
+        val refs = listOf("/shuttles/$shuttleId/trips/${initialTrip.passengerId}/")
 
         if (status == "exist") {
             tripValue.startSync(refs)
@@ -151,21 +164,7 @@ class ConfirmRouteActivity : AppCompatActivity() {
 
         TripService.mCurrentTrip = initialTrip
         val intent = Intent(this, CurrentTripActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun sendHTTPRequest(
-            initialTrip: TripModel,
-            callback: (String?, TripModel) -> Unit) {
-        val queue = Volley.newRequestQueue(this)
-        val url = "https://carlie-server.herokuapp.com/passengers/${initialTrip.passengerId}/trips/new"
-
-        val stringRequest = StringRequest(Request.Method.GET, url,
-                Response.Listener { response ->
-                    callback(response, initialTrip)
-                }, Response.ErrorListener { _ ->
-        })
-        queue.add(stringRequest)
+        startActivityForResult(intent, RC_FINISH)
     }
 
     private fun toMinutes(seconds: Double): Int {
@@ -255,5 +254,16 @@ class ConfirmRouteActivity : AppCompatActivity() {
         returnIntent.putExtra("quit", 1)
         setResult(Activity.RESULT_OK, returnIntent)
         finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_FINISH && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getIntExtra("quit", 0) == 1) {
+                finish()
+            }
+        }
+
     }
 }

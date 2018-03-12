@@ -7,6 +7,7 @@ import com.google.firebase.database.Exclude
 import com.google.firebase.database.ValueEventListener
 import com.harryliu.carlie.services.dataServices.RealTimeDatabaseService
 import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 /**
@@ -19,7 +20,7 @@ class RealTimeValue<T : FireBaseModel>
 (private var currentValue: T) {
 
 
-    val onChange = PublishSubject.create<T>()
+    val onChange = BehaviorSubject.create<T>()
 
     fun push(refs: List<String>): Observable<Unit> {
         return Observable.create { subscriber ->
@@ -52,7 +53,7 @@ class RealTimeValue<T : FireBaseModel>
         currentValue.updateProperty = { name, value ->
             val map = hashMapOf<String, Any>()
             refs.forEach { ref ->
-                map["$ref/$name"] = value
+                map["$ref$name"] = value
             }
 
             Log.d("RealTimeValue", "SET $name -> $value = $map")

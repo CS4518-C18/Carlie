@@ -41,16 +41,13 @@ import kotlinx.android.synthetic.main.activity_current_trip.*
 class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
     private var mMapView: MapView? = null
-
     private var mMap: MapboxMap? = null
     private var mPermissionsManager: PermissionsManager? = null
     private var mLocationPlugin: LocationLayerPlugin? = null
     private var mLocationEngine: LocationEngine? = null
 
 
-    private val currentTrip: TripModel = TripService.mCurrentTrip!!
-    private val currentTripValue = RealTimeValue(currentTrip)
-    private val currentTripRefs = listOf("/shuttles/${currentTrip.shuttleId}/trips/${currentTrip.passengerId}/")
+    val currentTrip: TripModel = TripService.mCurrentTrip!!
 
     private var geofenceManager: GeofenceManager? = null
     private var mPolygon: Polygon? = null
@@ -60,20 +57,15 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         setContentView(activity_current_trip)
         val cancel_ride_button: Button = cancel_ride_button
 
-        geofenceManager = GeofenceManager(this)
-
-        val pickupLocation = currentTrip.pickupLocation!!
-        val dropOffLocation = currentTrip.dropOffLocation!!
-
-        showGeofenceArea(pickupLocation)
-
+        val currentTripValue = RealTimeValue(currentTrip)
+        val currentTripRefs = listOf("/shuttles/${currentTrip.shuttleId}/trips/${currentTrip.passengerId}/")
         val shuttleLocationValue = RealTimeValue(LocationModel())
-
         val currentLocRefs = listOf("/shuttles/${currentTrip.shuttleId}/location/")
 
         currentTripValue.onChange.subscribe { newTrip ->
             Log.d("onChange", newTrip.toString())
             if (newTrip.shuttleEntered) {
+                Log.d("onChange", "shuttle entered")
                 NotificationService.showNotification(this, "enter", "good", this)
             }
         }
@@ -81,6 +73,12 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
         shuttleLocationValue.startSync(currentLocRefs)
         currentTripValue.startSync(currentTripRefs)
 
+        val pickupLocation = currentTrip.pickupLocation!!
+        val dropOffLocation = currentTrip.dropOffLocation!!
+
+        showGeofenceArea(pickupLocation)
+
+        geofenceManager = GeofenceManager(this)
         geofenceManager!!.addGeofence(
                 currentTrip.passengerId!!,
                 pickupLocation.latitude,
@@ -110,6 +108,9 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
 
         distanceToShuttleObservable.subscribe { distance ->
             message_text_view.text = getString(R.string.shuttle_arrive_time, estimateArriveTime(distance))
+            if (estimateArriveTime(distance) == 0) {
+                NotificationService.showNotification(this, "shuttle arrived", "on board!", this)
+            }
         }
 
         cancel_ride_button.setOnClickListener { _ ->
@@ -255,7 +256,6 @@ class CurrentTripActivity : AppCompatActivity(), PermissionsListener {
     override fun onPause() {
         super.onPause()
         mMapView!!.onPause()
-        TripService.mCurrentTrip = currentTrip
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

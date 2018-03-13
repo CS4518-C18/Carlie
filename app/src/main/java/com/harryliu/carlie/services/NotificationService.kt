@@ -31,7 +31,7 @@ object NotificationService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+                //.setAutoCancel(true)
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(notificationID, builder.build())
         return notificationID

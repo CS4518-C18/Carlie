@@ -25,32 +25,24 @@ import kotlinx.android.synthetic.main.activity_passenger_list.view.*
  */
 class PassengerListActivity : AppCompatActivity() {
     private var geofenceManager : GeofenceManager? = null
-    var firstTime = true
-
-//    private val mAdapter: AppAdapter = AppAdapter(mTripList)
+    val shuttleModel = ShuttleModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_passenger_list)
 
-        val shuttleModel = ShuttleModel()
         val shuttleModelValue = RealTimeValue(shuttleModel)
+
+        val plAdapter = PassengerListAdapter(this, shuttleModel)
+        plAdapter.mode = Attributes.Mode.Single
+        passenger_list_view.adapter = plAdapter
 
         shuttleModel.onTripsMapChange.subscribe {childMapChanges ->
             Log.d("onTripsMapChange", childMapChanges.toString())
-            if (firstTime) {
-                val plAdapter = PassengerListAdapter(this, shuttleModel)
-                plAdapter.mode = Attributes.Mode.Single
-                tripList.adapter = plAdapter
-                plAdapter.notifyDataSetChanged()
-                firstTime = false
-            }
+            plAdapter.notifyDataSetChanged()
         }
 
         shuttleModelValue.startSync(listOf("/shuttles/shuttle1/"))
-//        val
-
-//        DatabaseService.bindTripList(::updatePassengerList)
         ShuttleService.startLocationUpdates(this, shuttleModel.mCurrentLocationValue!!)
 
         geofenceManager = GeofenceManager(this)
@@ -73,7 +65,7 @@ class PassengerListActivity : AppCompatActivity() {
     }
 
     private fun enterPickupLocation(id: String) {
-        mTripList[id]?.getValue()!!.shuttleEntered = true
+        shuttleModel.trips[id]?.shuttleEntered = true
     }
 
     private fun leavePickupLocation(id: String) {
